@@ -49,9 +49,6 @@ public class GameScreen extends ScreenAdapter {
 		PLAYING, GAME_OVER
 	}
 	private STATE state=STATE.PLAYING;
-	
-	private BitmapFont bitmapFont;
-	private GlyphLayout layout = new GlyphLayout();	
 
 	
 	private static final String GAME_OVER_TEXT="Game Over!";
@@ -60,11 +57,9 @@ public class GameScreen extends ScreenAdapter {
 	public void show(){
 		shapeRenderer=new ShapeRenderer();
 		batch=new SpriteBatch();
-		//System.out.println(System.getProperty("user.dir"));
 		snakeHead=new Texture(Gdx.files.internal("snakeHead.png"));
 		apple=new Texture(Gdx.files.internal("apple.png"));
 		snakeBody=new Texture(Gdx.files.internal("snakeBody.png"));
-		bitmapFont = new BitmapFont();
 	}
 	
 	@Override
@@ -190,8 +185,7 @@ public class GameScreen extends ScreenAdapter {
 		batch.draw(apple, appleX, appleY);
 		}
 		if (state == STATE.GAME_OVER) {
-            layout.setText(bitmapFont, GAME_OVER_TEXT);
-			bitmapFont.draw(batch, GAME_OVER_TEXT, 0, layout.height);
+			new BitmapFont().draw(batch, GAME_OVER_TEXT, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
         }
 		batch.end();
 	}
@@ -226,6 +220,7 @@ public class GameScreen extends ScreenAdapter {
 			BodyPart bodyPart = bodyParts.get(i);
 			if(isOverlapping(bodyPart.getX(), bodyPart.getY(), snakeBody.getHeight(), snakeBody.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
 				state = STATE.GAME_OVER;
+				hasHit = true;
 			}
 		}
 	}
