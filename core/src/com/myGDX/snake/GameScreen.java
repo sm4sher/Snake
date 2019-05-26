@@ -14,14 +14,16 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
+import java.awt.Point;
+
 public class GameScreen extends ScreenAdapter {
 
 	private SpriteBatch batch;
 	private Texture snakeHead;
 	
-	private static final float MOVE_TIME= 0.0002F;
+	private static final float MOVE_TIME= 0.001F;
 	private float timer = MOVE_TIME;
-	private static final int SNAKE_MOVEMENT=5;
+	private static final int SNAKE_MOVEMENT=4;
 	private int snakeX=0, snakeY=0;
 	private static final int RIGHT=0;
 	private static final int LEFT=1;
@@ -36,7 +38,7 @@ public class GameScreen extends ScreenAdapter {
 	
 	private Texture snakeBody;
 	private Array<BodyPart> bodyParts= new Array<BodyPart>();
-	private int snakeXBeforeUpdate=0, snakeYBeforeUpdate=0;
+	private Array<Point> previousPositions = new Array<Point>();
 	
 	private ShapeRenderer shapeRenderer;
 	
@@ -112,24 +114,23 @@ public class GameScreen extends ScreenAdapter {
 	}
 	
 	private void moveSnake(){
-		snakeXBeforeUpdate=snakeX;
-		snakeYBeforeUpdate=snakeY;
+		previousPositions.add(new Point(snakeX, snakeY));
 		switch(snakeDirection){
 			case RIGHT: {
 				snakeX+=SNAKE_MOVEMENT;
-				return;
+				break;
 			}
 			case LEFT: {
 				snakeX-=SNAKE_MOVEMENT;
-				return;
+				break;
 			}
 			case UP: {
 				snakeY+=SNAKE_MOVEMENT;
-				return;
+				break;
 			}
 			case DOWN: {
 				snakeY-=SNAKE_MOVEMENT;
-				return;
+				break;
 			}
 		}
 	}
@@ -159,20 +160,18 @@ public class GameScreen extends ScreenAdapter {
 	}
 	
 	private void updateBodyPartsPosition(){
-		if(bodyParts.size>0){
-			BodyPart bodyPart=bodyParts.removeIndex(0);
-			bodyPart.updateBodyPosition(snakeXBeforeUpdate,snakeYBeforeUpdate);
-			bodyParts.add(bodyPart);
-		}
+		for(BodyPart bodyPart : bodyParts)
+			bodyPart.nextPosition();
 	}
 	
+	//TODO: Empecher d'apparaitre sur tout le corps du serpent, pas seulement la tête
 	private void checkAndPlaceApple(){
 		if(!appleAvailable){
 			do{
 				appleX=MathUtils.random(Gdx.graphics.getBackBufferHeight()/SNAKE_MOVEMENT-1)*SNAKE_MOVEMENT;
 				appleY=MathUtils.random(Gdx.graphics.getHeight()/SNAKE_MOVEMENT-1)*SNAKE_MOVEMENT;
 				appleAvailable=true;		
-			} while (appleX==snakeX && appleY == snakeY);
+			} while (isOverlapping(appleX, appleY, apple.getHeight(), apple.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth()));
 		}
 	}
 	
@@ -198,43 +197,39 @@ public class GameScreen extends ScreenAdapter {
 	}
 	
 	private void checkAppleCollision(){
-		if(appleAvailable && appleX == snakeX && appleY ==snakeY){
-			BodyPart bodyPart = new BodyPart(snakeBody);
-			bodyPart.updateBodyPosition(snakeX, snakeY);
-			bodyParts.insert(0,bodyPart);
+		if(appleAvailable && isOverlapping(snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth(), appleX, appleY, apple.getHeight(), apple.getWidth())){
+			//On calcule l'index de la position à laquelle placer la bodyPart: il faut que ce soit la position qui se trouve juste avant la dernière bodyPart (ou la tête si aucune bodyPart)
+			//Comme le snake bouge de SNAKE_MOVEMENT pixels à chaque position, pour chaque bodyPart (+la tête), il faut enlever TAILLE_IMAGE/SNAKE_MOVEMENT positions.
+			//Attention, fonction à changer si image non carrée (getHeight est utilisé) ou si taille de la tête différente des bodyParts
+			int positionIndex = previousPositions.size - (bodyParts.size + 1)*(snakeHead.getHeight()/SNAKE_MOVEMENT);
+			bodyParts.add(new BodyPart(snakeBody, previousPositions, positionIndex));
 			appleAvailable=false;
 		}
 	}
-	
-	private class BodyPart {
-		private int x,y;
-		private Texture texture;
-		
-		public BodyPart(Texture texture){
-			this.texture=texture;
-		}
-		
-		public void updateBodyPosition(int x, int y){
-			this.x=x;
-			this.y=y;
-		}
-		
-		public void draw(Batch batch){
-			if(!(x==snakeX && y==snakeY))batch.draw(texture,x,y);
-		}
+
+	private boolean isOverlapping(int x1, int y1, int h1, int w1, int x2, int y2, int h2, int w2){
+		int top1 = y1 + h1;
+		int right1 = x1 + w1;
+		int top2 = y2 + h2;
+		int right2 = x2 + w2;
+		return !(y1 >= top2 || y2 >= top1 || x1 >= right2 || x2 >= right1);
+
 	}
 
-	
 	private void updateIfNotOppositeDirection(int newSnakeDirection, int oppositeDirection) {
 			if (snakeDirection != oppositeDirection || bodyParts.size==0) snakeDirection = newSnakeDirection;
 	}
-	
+
 	private void checkSnakeBodyCollision(){
-		for(BodyPart bodyPart:bodyParts){
-			if(bodyPart.x == snakeX && bodyPart.y==snakeY) state=STATE.GAME_OVER;
+		//On ne vérifie pas la première bodyPart car elle overlap avec la tête lors des virages par exemple, et il est de toute façon normalement impossible de percuter la première
+		for(int i = 1; i < bodyParts.size; i++){
+			BodyPart bodyPart = bodyParts.get(i);
+			if(isOverlapping(bodyPart.getX(), bodyPart.getY(), snakeBody.getHeight(), snakeBody.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
+				state = STATE.GAME_OVER;
+			}
 		}
 	}
-	
+
 	private void updateSnake(float delta){
 		if(!hasHit){
 			timer-=delta;
