@@ -24,6 +24,11 @@ public class Snake {
 	private Array<BodyPart> bodyParts= new Array<BodyPart>();
 	private Array<Point> previousPositions = new Array<Point>();
 
+	public static enum STATE {
+		ALIVE, DEAD
+	}
+	private STATE state=STATE.ALIVE;
+
 	private GameScreen game;
 
 	public Snake(GameScreen game, String color, int initX, int initY){
@@ -32,6 +37,24 @@ public class Snake {
 		snakeHead = new Texture(Gdx.files.internal("snakeHead.png"));
 		snakeBody = new Texture(Gdx.files.internal("snakeBody.png"));
 		this.game = game;
+	}
+
+	public Array<BodyPart> getBodyParts(){
+		return bodyParts;
+	}
+
+	public STATE getState(){
+		return state;
+	}
+
+	public void update(int windowHeight, int windowWidth, int appleX, int appleY, int appleHeight, int appleWidth, Array<Snake> snakes){
+		move();
+		checkForOutOfBounds(windowHeight, windowWidth);
+		updateBodyPartsPosition();
+		checkSelfCollision();
+		checkSnakeCollision(snakes);
+		checkAppleCollision(appleX, appleY, appleHeight, appleWidth);
+		directionSet=false;
 	}
 
 	public void move(){
@@ -94,10 +117,23 @@ public class Snake {
 		for(int i = 1; i < bodyParts.size; i++){
 			BodyPart bodyPart = bodyParts.get(i);
 			if(isOverlapping(bodyPart.getX(), bodyPart.getY(), snakeBody.getHeight(), snakeBody.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
-				return true;
+				state = STATE.DEAD;
 			}
 		}
 		return false;
+	}
+
+	public void checkSnakeCollision(Array<Snake> snakes){
+		for(int i = 0; i < snakes.size; i++){
+			Snake otherSnake = snakes.get(i);
+			if(otherSnake == this)
+				continue;
+			for(BodyPart otherBodyPart : otherSnake.getBodyParts()){
+				if(isOverlapping(otherBodyPart.getX(), otherBodyPart.getY(), snakeBody.getHeight(), snakeBody.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
+					state = STATE.DEAD;
+				}
+			}
+		}
 	}
 
 	public void checkForOutOfBounds(int width, int height){
@@ -127,6 +163,8 @@ public class Snake {
 	}
 
 	public void draw(Batch batch){
+		if(state == STATE.DEAD)
+			return;
 		batch.draw(snakeHead, snakeX, snakeY); 
 		for(BodyPart bodyPart:bodyParts){
 			bodyPart.draw(batch);

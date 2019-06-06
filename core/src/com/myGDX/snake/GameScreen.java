@@ -38,6 +38,7 @@ public class GameScreen extends ScreenAdapter {
 		PLAYING, GAME_OVER
 	}
 	private STATE state=STATE.PLAYING;
+	private int numberAlives;
 
 	private Array<Snake> snakes = new Array<Snake>();
 
@@ -50,10 +51,13 @@ public class GameScreen extends ScreenAdapter {
 		apple=new Texture(Gdx.files.internal("apple.png"));
 		snakes.add(new Snake(this, "green", 0, 0));
 		snakes.add(new Snake(this, "yellow", 50, 50));
+		numberAlives = snakes.size;
 	}
 	
 	@Override
 	public void render(float delta){
+		if(numberAlives == 0)
+			state = STATE.GAME_OVER;
 		switch(state){
 		case PLAYING: {
 			queryInput();
@@ -61,8 +65,13 @@ public class GameScreen extends ScreenAdapter {
 			timer-=delta;
 			if(timer<=0){
 				timer=MOVE_TIME;
-				for(Snake snake : snakes)
-					updateSnake(snake);
+				numberAlives = 0;
+				for(Snake snake : snakes){
+					snake.update(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), appleX, appleY, apple.getHeight(), apple.getWidth(), snakes);
+					if(snake.getState() == Snake.STATE.ALIVE)
+						numberAlives++;
+					//updateSnake(snake);
+				}
 			}
 			checkAndPlaceApple();
 		}
@@ -150,15 +159,5 @@ public class GameScreen extends ScreenAdapter {
 		int right2 = x2 + w2;
 		return !(y1 >= top2 || y2 >= top1 || x1 >= right2 || x2 >= right1);
 
-	}
-
-	private void updateSnake(Snake snake){
-		snake.move();
-		snake.checkForOutOfBounds(Gdx.graphics.getHeight(), Gdx.graphics.getWidth());
-		snake.updateBodyPartsPosition();
-		if(snake.checkSelfCollision())
-			state  = STATE.GAME_OVER;
-		snake.checkAppleCollision(appleX, appleY, apple.getHeight(), apple.getWidth());
-		snake.directionSet=false;
 	}
 }
