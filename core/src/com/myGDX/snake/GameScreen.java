@@ -6,10 +6,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
@@ -32,6 +29,7 @@ public class GameScreen extends ScreenAdapter {
 	
 	private Texture apple;
 	private boolean appleAvailable=false;
+	public boolean explode = true;
 	private int appleX, appleY;
 	
 	private enum STATE {
@@ -44,16 +42,52 @@ public class GameScreen extends ScreenAdapter {
 
 	
 	private static final String GAME_OVER_TEXT="Game Over!";
-	
+
+	// Constant rows and columns of the sprite sheet
+	private static final int FRAME_COLS = 3, FRAME_ROWS = 3;
+
+	// Objects used
+	public Animation<TextureRegion> snakeDieAnim; // Must declare frame type (TextureRegion)
+	private Texture snakeDieSheet=new Texture(Gdx.files.internal("snakeDie.png"));
+
+	// A variable for tracking elapsed time for the animation
+	private float stateTime = 0;
+	public TextureRegion currentFrame;
+
 	@Override
 	public void show(){
+		create();
 		batch=new SpriteBatch();
 		apple=new Texture(Gdx.files.internal("apple.png"));
 		snakes.add(new Snake(this, "green", 0, 0));
 		snakes.add(new Snake(this, "yellow", 50, 50));
 		numberAlives = snakes.size;
 	}
-	
+
+	private void create() {
+
+		TextureRegion[][] tmp = TextureRegion.split(snakeDieSheet,
+				snakeDieSheet.getWidth() / FRAME_COLS,
+				snakeDieSheet.getHeight() / FRAME_ROWS);
+
+		// Place the regions into a 1D array in the correct order, starting from the top
+		// left, going across first. The Animation constructor requires a 1D array.
+		TextureRegion[] walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
+		int index = 0;
+		for (int i = 0; i < FRAME_ROWS; i++) {
+			for (int j = 0; j < FRAME_COLS; j++) {
+				walkFrames[index++] = tmp[i][j];
+			}
+		}
+
+		// Initialize the Animation with the frame interval and array of frames
+		snakeDieAnim = new Animation<TextureRegion>(0.025f, walkFrames);
+
+		// Instantiate a SpriteBatch for drawing and reset the elapsed animation
+		// time to 0
+		stateTime = 0f;
+	}
+
 	@Override
 	public void render(float delta){
 		if(numberAlives == 0)
@@ -138,8 +172,13 @@ public class GameScreen extends ScreenAdapter {
 	}
 	
 	private void draw(){
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
+		stateTime += Gdx.graphics.getDeltaTime();
+		currentFrame = snakeDieAnim.getKeyFrame(stateTime, true);
 		batch.begin();
-
+		if (explode){
+			batch.draw(currentFrame, 0, 0);
+		}
 		for(Snake snake : snakes)
 			snake.draw(batch);
 
@@ -150,14 +189,5 @@ public class GameScreen extends ScreenAdapter {
 			new BitmapFont().draw(batch, GAME_OVER_TEXT, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
         }
 		batch.end();
-	}
-
-	private boolean isOverlapping(int x1, int y1, int h1, int w1, int x2, int y2, int h2, int w2){
-		int top1 = y1 + h1;
-		int right1 = x1 + w1;
-		int top2 = y2 + h2;
-		int right2 = x2 + w2;
-		return !(y1 >= top2 || y2 >= top1 || x1 >= right2 || x2 >= right1);
-
 	}
 }

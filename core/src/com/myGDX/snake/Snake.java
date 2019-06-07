@@ -159,6 +159,8 @@ public class Snake {
 			int positionIndex = previousPositions.size - (bodyParts.size + 1)*(snakeHead.getHeight()/SNAKE_MOVEMENT);
 			bodyParts.add(new BodyPart(snakeBody, previousPositions, positionIndex));
 			game.setAppleAvailable(false);
+			//game.explode = true;
+
 		}
 	}
 
