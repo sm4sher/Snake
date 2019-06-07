@@ -59,8 +59,8 @@ public class GameScreen extends ScreenAdapter {
 		create();
 		batch=new SpriteBatch();
 		apple=new Texture(Gdx.files.internal("apple.png"));
-		snakes.add(new Snake(this, "green", 0, 0));
-		snakes.add(new Snake(this, "yellow", 50, 50));
+		snakes.add(new Snake(this, Snake.Color.GREEN, 0, 0));
+		snakes.add(new Snake(this, Snake.Color.RED, 50, 50));
 		numberAlives = snakes.size;
 	}
 
@@ -151,10 +151,14 @@ public class GameScreen extends ScreenAdapter {
 				appleY=MathUtils.random(Gdx.graphics.getHeight()/Snake.SNAKE_MOVEMENT-1)*Snake.SNAKE_MOVEMENT;
 				appleAvailable=true;
 				onASnake = false;
-				//for(Snake snake : snakes)
-					//if(isOverlapping())
+				for(Snake snake : snakes){
+					if(snake.isOnSnake(appleX, appleY, apple.getHeight(), apple.getWidth())){
+						onASnake = true;
+						break;
+					}
+				}
+
 			} while(onASnake);
-			//} while (isOverlapping(appleX, appleY, apple.getHeight(), apple.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth()));
 		}
 	}
 

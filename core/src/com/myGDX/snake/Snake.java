@@ -17,6 +17,10 @@ public class Snake {
 	private static final int UP=2;
 	private static final int DOWN=3;
 	
+	public static enum Color {
+		GREEN, BLUE, ORANGE, RED
+	}
+
 	private int snakeDirection=RIGHT;
 	public boolean directionSet=false;
 
@@ -31,12 +35,26 @@ public class Snake {
 
 	private GameScreen game;
 
-	public Snake(GameScreen game, String color, int initX, int initY){
+	public Snake(GameScreen game, Color color, int initX, int initY){
 		snakeX = initX;
 		snakeY = initY;
-		snakeHead = new Texture(Gdx.files.internal("snakeHead.png"));
-		snakeBody = new Texture(Gdx.files.internal("snakeBody.png"));
+		snakeHead = new Texture(Gdx.files.internal("snakeHead" + getColorNumber(color) + ".png"));
+		snakeBody = new Texture(Gdx.files.internal("snakeBody" + getColorNumber(color) + ".png"));
 		this.game = game;
+	}
+
+	public static int getColorNumber(Color color){
+		switch(color){
+			case GREEN:
+				return 1;
+			case BLUE:
+				return 2;
+			case ORANGE:
+				return 3;
+			case RED:
+				return 4;
+		}
+		return 1;
 	}
 
 	public Array<BodyPart> getBodyParts(){
@@ -162,6 +180,15 @@ public class Snake {
 			//game.explode = true;
 
 		}
+	}
+
+	public boolean isOnSnake(int x, int y, int height, int width){
+		if(isOverlapping(x, y, height, width, snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth()))
+			return true;
+		for(BodyPart bodyPart : bodyParts)
+			if(isOverlapping(x, y, height, width, bodyPart.getX(), bodyPart.getY(), snakeBody.getHeight(), snakeBody.getWidth()))
+				return true;
+		return false;
 	}
 
 	public void draw(Batch batch){
