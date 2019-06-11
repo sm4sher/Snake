@@ -37,6 +37,9 @@ public class Screen_start_textures implements Screen{
     protected TextureRegionDrawable drawable_jeu;
     protected ImageButton button_jeu;
 
+    protected Texture texture_background;
+    protected Texture texture_upground;
+
     protected int WorldWidth = 1024;
     protected int WorldHeigth = 1024;
 
@@ -68,6 +71,9 @@ public class Screen_start_textures implements Screen{
         drawable_jeu = new TextureRegionDrawable(region_jeu);
         button_jeu = new ImageButton(drawable_jeu);
 
+        texture_background = new Texture("menuBG.png");
+        texture_upground = new Texture("bgSupp.png");
+
         table.add(button_jeu);
 
         stage.addActor(table);
@@ -77,9 +83,7 @@ public class Screen_start_textures implements Screen{
         button_jeu.addListener(new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
                 button_jeu.addAction(Actions.fadeOut(0.7f));
-                button_jeu.setDisabled(true);
-                button_mode.setDisabled(true);
-                button_multi.setDisabled(true);
+                table.clearChildren();
                 game.setScreen(new GameScreen(2, 0));
             }
         });
@@ -112,6 +116,10 @@ public class Screen_start_textures implements Screen{
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
+        stage.getBatch().begin();
+        stage.getBatch().draw(texture_background,0,0);
+        stage.getBatch().draw(texture_upground,0,0);
+        stage.getBatch().end();
         stage.draw();
         batch.end();
     }
