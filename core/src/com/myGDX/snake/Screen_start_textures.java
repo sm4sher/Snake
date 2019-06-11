@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -40,13 +41,56 @@ public class Screen_start_textures implements Screen{
     protected int WorldWidth = 1024;
     protected int WorldHeigth = 1024;
 
+    private static final int FRAME_COLS = 5, FRAME_ROWS = 8;
+
+    // Objects used
+    public Animation<TextureRegion> playAnimation; // Must declare frame type (TextureRegion)
+    Texture walkSheet;
+    SpriteBatch spriteBatch;
+
+    // A variable for tracking elapsed time for the animation
+    float stateTime;
+
     SnakeGame game;
+
+    public void create() {
+
+        // Load the sprite sheet as a Texture
+        walkSheet = new Texture(Gdx.files.internal("playSheet.png"));
+
+        // Use the split utility method to create a 2D array of TextureRegions. This is
+        // possible because this sprite sheet contains frames of equal size and they are
+        // all aligned.
+        TextureRegion[][] tmp = TextureRegion.split(walkSheet,
+                walkSheet.getWidth() / FRAME_COLS,
+                walkSheet.getHeight() / FRAME_ROWS);
+
+        // Place the regions into a 1D array in the correct order, starting from the top
+        // left, going across first. The Animation constructor requires a 1D array.
+        TextureRegion[] playFrame = new TextureRegion[FRAME_COLS * FRAME_ROWS];
+        int index = 0;
+        for (int i = 0; i < FRAME_ROWS; i++) {
+            for (int j = 0; j < FRAME_COLS; j++) {
+                playFrame[index++] = tmp[i][j];
+            }
+        }
+
+        // Initialize the Animation with the frame interval and array of frames
+        playAnimation = new Animation<TextureRegion>(0.050f, playFrame);
+
+        // Instantiate a SpriteBatch for drawing and reset the elapsed animation
+        // time to 0
+        stateTime = 0f;
+    }
+
 
     public Screen_start_textures(SnakeGame _game){
         game = _game;
-
+        create();
         batch = new SpriteBatch();
         stage = new Stage();
+
+
 
         Gdx.input.setInputProcessor(stage);
 
@@ -110,9 +154,12 @@ public class Screen_start_textures implements Screen{
     public void render(float delta) {
         Gdx.gl.glClearColor(1,1,1,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        stateTime += Gdx.graphics.getDeltaTime();
 
+        TextureRegion currentFrame = playAnimation.getKeyFrame(stateTime, true);
         batch.begin();
-        stage.draw();
+        //stage.draw();
+        batch.draw(currentFrame, 50, 50); // Draw current frame at (50, 50)
         batch.end();
     }
 
