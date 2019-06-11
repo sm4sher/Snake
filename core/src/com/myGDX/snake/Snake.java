@@ -92,7 +92,7 @@ public class Snake {
 	}
 
 	public void update(int windowHeight, int windowWidth, int appleX, int appleY, int appleHeight, int appleWidth, Array<Snake> snakes){
-		if(state == STATE.DEAD || state == STATE.DYING)
+		if(isDead())
 			return;
 		move();
 		checkForOutOfBounds(windowHeight, windowWidth);
@@ -101,6 +101,14 @@ public class Snake {
 		checkSnakeCollision(snakes);
 		checkAppleCollision(appleX, appleY, appleHeight, appleWidth);
 		directionSet=false;
+	}
+
+	public boolean isDead(){
+		return state == STATE.DEAD || state == STATE.DYING;
+	}
+
+	public void setState(STATE state){
+		this.state = state;
 	}
 
 	public void move(){
@@ -174,6 +182,12 @@ public class Snake {
 			Snake otherSnake = snakes.get(i);
 			if(otherSnake == this)
 				continue;
+			if(otherSnake.isDead())
+				continue;
+			if(isOverlapping(otherSnake.getSnakeX(), otherSnake.getSnakeY(), snakeHead.getHeight(), snakeHead.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
+				state = STATE.DYING;
+				otherSnake.setState(STATE.DYING);
+			}
 			for(BodyPart otherBodyPart : otherSnake.getBodyParts()){
 				if(isOverlapping(otherBodyPart.getX(), otherBodyPart.getY(), snakeBody.getHeight(), snakeBody.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
 					state = STATE.DYING;
@@ -226,8 +240,7 @@ public class Snake {
 			elapsedTime += Gdx.graphics.getDeltaTime();
 			for(BodyPart bodyPart:bodyParts){
 				batch.draw((TextureRegion) animation.getKeyFrame(elapsedTime,false),bodyPart.getX(),bodyPart.getY());
-				System.out.println(elapsedTime);
-				if(elapsedTime > 1)
+				if(elapsedTime > 0.8)
 					state = STATE.DEAD;
 			}
 			return;
