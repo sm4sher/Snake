@@ -80,7 +80,7 @@ public class Screen_start_textures implements Screen{
                 button_jeu.setDisabled(true);
                 button_mode.setDisabled(true);
                 button_multi.setDisabled(true);
-                game.setScreen(new GameScreen(1,1));
+                game.setScreen(new GameScreen(2, 0));
             }
         });
 

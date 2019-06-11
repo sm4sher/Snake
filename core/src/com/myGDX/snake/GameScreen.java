@@ -25,9 +25,14 @@ public class GameScreen extends ScreenAdapter {
 	private static final int DOWN=3;
 	
 	private Texture bc = new Texture("bc.png");
+    private Texture bgSupp = new Texture("bgSupp.png");
 	private Texture apple;
+    private Texture banana;
+    private Texture bug;
 	private boolean appleAvailable=false;
 	private int appleX, appleY;
+    private int bananaX, bananaeY;
+    private int bugX, bugY;
 	
 	private enum STATE {
 		PLAYING, GAME_OVER
@@ -54,6 +59,8 @@ public class GameScreen extends ScreenAdapter {
 	public void show(){
 		batch=new SpriteBatch();
 		apple=new Texture(Gdx.files.internal("apple.png"));
+        banana=new Texture(Gdx.files.internal("banana.png"));
+        bug=new Texture(Gdx.files.internal("bug.png"));
 		snakes.add(new Snake(this, Snake.Color.GREEN, 0, 0));
 		if(nbPlayers == 2)
 			snakes.add(new Snake(this, Snake.Color.RED, 50, 50));
@@ -157,7 +164,7 @@ public class GameScreen extends ScreenAdapter {
 		if (state == STATE.GAME_OVER) {
 			new BitmapFont().draw(batch, GAME_OVER_TEXT, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
         }
-
+        batch.draw(bgSupp, 0, 0);
 		batch.end();
 	}
 }
