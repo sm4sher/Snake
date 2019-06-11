@@ -14,6 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import javax.swing.*;
+
 public class Screen_start_textures implements Screen{
 
     protected SpriteBatch batch;
@@ -52,19 +54,20 @@ public class Screen_start_textures implements Screen{
         table.setSize(WorldWidth, WorldHeigth);
 
         double_multi = new Double_button(string_multi_up, string_multi_down);
-        button_multi = new ImageButton(double_multi.texture_draw(true));
+        button_multi = new ImageButton(double_multi.texture_draw(true), double_multi.texture_draw(false), double_multi.texture_draw(false));
         table.add(button_multi);
-        table.row();
+        table.row().height(146).width(240);
 
         double_mode = new Double_button(string_mode_up, string_mode_down);
-        button_mode = new ImageButton(double_mode.texture_draw(true));
+        button_mode = new ImageButton(double_mode.texture_draw(true), double_mode.texture_draw(false), double_mode.texture_draw(false));
         table.add(button_mode);
-        table.row();
+        table.row().height(106).width(240);
 
         texture_jeu = new Texture(Gdx.files.internal("texture_jeu.gif"));
         region_jeu = new TextureRegion(texture_jeu);
         drawable_jeu = new TextureRegionDrawable(region_jeu);
         button_jeu = new ImageButton(drawable_jeu);
+
         table.add(button_jeu);
 
         stage.addActor(table);
@@ -77,7 +80,7 @@ public class Screen_start_textures implements Screen{
                 button_jeu.setDisabled(true);
                 button_mode.setDisabled(true);
                 button_multi.setDisabled(true);
-                game.setScreen(new GameScreen());
+                game.setScreen(new GameScreen(1,1));
             }
         });
 
@@ -85,7 +88,7 @@ public class Screen_start_textures implements Screen{
             public void clicked(InputEvent event, float x, float y){
                 button_multi.addAction(Actions.fadeOut(0.7f));
                 double_multi.update_state();
-                button_multi = new ImageButton(double_multi.texture_draw(double_multi.get_state()));
+                button_multi.setChecked(double_multi.get_state());
             }
         });
 
@@ -93,7 +96,7 @@ public class Screen_start_textures implements Screen{
             public void clicked(InputEvent event, float x, float y){
                 button_mode.addAction(Actions.fadeOut(0.7f));
                 double_mode.update_state();
-                button_mode = new ImageButton(double_mode.texture_draw(double_mode.get_state()));
+                button_mode.setChecked(double_mode.get_state());
             }
         });
     }
