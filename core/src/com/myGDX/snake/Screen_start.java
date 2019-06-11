@@ -63,7 +63,7 @@ public class Screen_start implements Screen{
         jeu.addListener(new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
                 jeu.addAction(Actions.fadeOut(0.7f));
-                game.setScreen(new GameScreen());
+                game.setScreen(new GameScreen(2, 0));
             }
         });
     }

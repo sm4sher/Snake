@@ -37,17 +37,26 @@ public class GameScreen extends ScreenAdapter {
 
 	private Array<Snake> snakes = new Array<Snake>();
 
-	boolean dying = false;
+	private boolean dying = false;
+	private int nbPlayers;
+	private int gameMode;
 	
 	private static final String GAME_OVER_TEXT="Game Over!";
 
+
+	public GameScreen(int nbPlayers, int gameMode){
+		super();
+		this.nbPlayers = nbPlayers;
+		this.gameMode = gameMode;
+	}
 
 	@Override
 	public void show(){
 		batch=new SpriteBatch();
 		apple=new Texture(Gdx.files.internal("apple.png"));
 		snakes.add(new Snake(this, Snake.Color.GREEN, 0, 0));
-		snakes.add(new Snake(this, Snake.Color.RED, 50, 50));
+		if(nbPlayers == 2)
+			snakes.add(new Snake(this, Snake.Color.RED, 50, 50));
 		numberAlives = snakes.size;
 	}
 
@@ -66,7 +75,6 @@ public class GameScreen extends ScreenAdapter {
 					snake.update(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), appleX, appleY, apple.getHeight(), apple.getWidth(), snakes);
 					if(snake.getState() == Snake.STATE.ALIVE)
 						numberAlives++;
-					//updateSnake(snake);
 				}
 			}
 			checkAndPlaceApple();
