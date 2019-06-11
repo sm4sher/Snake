@@ -1,6 +1,7 @@
 package com.myGDX.snake;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -43,6 +44,9 @@ public class Snake {
 
 	private GameScreen game;
 
+	Sound sound;
+	long id;
+
 	public Snake(GameScreen game, Color color, int initX, int initY){
 		snakeX = initX;
 		snakeY = initY;
@@ -50,6 +54,7 @@ public class Snake {
 		snakeBody = new Texture(Gdx.files.internal("snakeBody" + getColorNumber(color) + ".png"));
 		this.game = game;
 		create();
+		sound = Gdx.audio.newSound(Gdx.files.internal("beep.wav"));
 	}
 
 	public void create () {
@@ -219,6 +224,7 @@ public class Snake {
 			int positionIndex = previousPositions.size - (bodyParts.size + 1)*(snakeHead.getHeight()/SNAKE_MOVEMENT);
 			bodyParts.add(new BodyPart(snakeBody, previousPositions, positionIndex));
 			game.setAppleAvailable(false);
+			id = sound.play(2.0f);
 		}
 	}
 

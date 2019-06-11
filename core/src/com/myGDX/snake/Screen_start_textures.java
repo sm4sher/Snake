@@ -2,13 +2,13 @@ package com.myGDX.snake;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -21,57 +21,51 @@ import javax.swing.*;
 
 public class Screen_start_textures implements Screen{
 
-    protected SpriteBatch batch;
-    protected Stage stage;
-    protected Table table;
+    private SpriteBatch batch;
+    private Stage stage;
+    private Table table;
 
-    protected String string_multi_up = "texture_multi_up.png";
-    protected String string_multi_down = "texture_multi_down.png";
-    protected Double_button double_multi;
-    protected ImageButton button_multi;
+    private String string_multi_up = "texture_multi_up.png";
+    private String string_multi_down = "texture_multi_down.png";
+    private Double_button double_multi;
+    private ImageButton button_multi;
 
-    protected String string_mode_up = "texture_mode_up.png";
-    protected String string_mode_down = "texture_mode_down.png";
-    protected Double_button double_mode;
-    protected ImageButton button_mode;
+    private String string_mode_up = "texture_mode_up.png";
+    private String string_mode_down = "texture_mode_down.png";
+    private Double_button double_mode;
+    private ImageButton button_mode;
 
-    protected Texture texture_jeu;
-    protected TextureRegion region_jeu;
-    protected TextureRegionDrawable drawable_jeu;
-    protected ImageButton button_jeu;
+    private Texture texture_jeu;
+    private TextureRegion region_jeu;
+    private TextureRegionDrawable drawable_jeu;
+    private ImageButton button_jeu;
 
-    protected Texture texture_background;
-    protected Texture texture_upground;
+    private Texture texture_background;
+    private Texture texture_upground;
 
-    protected int WorldWidth = 1024;
-    protected int WorldHeigth = 1024;
+    private int WorldWidth = 1024;
+    private int WorldHeigth = 1024;
 
     private static final int FRAME_COLS = 5, FRAME_ROWS = 8;
 
-    // Objects used
-    public Animation<TextureRegion> playAnimation; // Must declare frame type (TextureRegion)
-    Texture walkSheet;
+    private Animation<TextureRegion> playAnimation; // Must declare frame type (TextureRegion)
+    private Texture walkSheet;
     SpriteBatch spriteBatch;
+    private float stateTime;
 
-    // A variable for tracking elapsed time for the animation
-    float stateTime;
+    private SnakeGame game;
 
-    SnakeGame game;
+    private Sound sound;
+    private long id;
 
-    public void create() {
+    protected void create() {
 
-        // Load the sprite sheet as a Texture
         walkSheet = new Texture(Gdx.files.internal("playSheet.png"));
 
-        // Use the split utility method to create a 2D array of TextureRegions. This is
-        // possible because this sprite sheet contains frames of equal size and they are
-        // all aligned.
         TextureRegion[][] tmp = TextureRegion.split(walkSheet,
                 walkSheet.getWidth() / FRAME_COLS,
                 walkSheet.getHeight() / FRAME_ROWS);
 
-        // Place the regions into a 1D array in the correct order, starting from the top
-        // left, going across first. The Animation constructor requires a 1D array.
         TextureRegion[] playFrame = new TextureRegion[FRAME_COLS * FRAME_ROWS];
         int index = 0;
         for (int i = 0; i < FRAME_ROWS; i++) {
@@ -80,11 +74,8 @@ public class Screen_start_textures implements Screen{
             }
         }
 
-        // Initialize the Animation with the frame interval and array of frames
         playAnimation = new Animation<TextureRegion>(0.050f, playFrame);
 
-        // Instantiate a SpriteBatch for drawing and reset the elapsed animation
-        // time to 0
         stateTime = 0f;
     }
 
@@ -95,7 +86,7 @@ public class Screen_start_textures implements Screen{
         batch = new SpriteBatch();
         stage = new Stage();
 
-
+        sound = Gdx.audio.newSound(Gdx.files.internal("boutton.wav"));
 
         Gdx.input.setInputProcessor(stage);
 
@@ -129,6 +120,7 @@ public class Screen_start_textures implements Screen{
         button_jeu.addListener(new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
                 button_jeu.addAction(Actions.fadeOut(0.7f));
+                id = sound.play(1.0f);
                 table.clearChildren();
                 game.setScreen(new GameScreen(game,2, 0));
             }
@@ -136,6 +128,7 @@ public class Screen_start_textures implements Screen{
 
         button_multi.addListener(new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
+                id = sound.play(1.0f);
                 button_multi.addAction(Actions.fadeOut(0.7f));
                 double_multi.update_state();
                 button_multi.setChecked(double_multi.get_state());
@@ -144,6 +137,7 @@ public class Screen_start_textures implements Screen{
 
         button_mode.addListener(new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
+                id = sound.play(1.0f);
                 button_mode.addAction(Actions.fadeOut(0.7f));
                 double_mode.update_state();
                 button_mode.setChecked(double_mode.get_state());
