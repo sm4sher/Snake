@@ -38,7 +38,9 @@ public class GameScreen extends ScreenAdapter {
 
 	private Array<Snake> snakes = new Array<Snake>();
 
-	boolean dying = false;
+	private boolean dying = false;
+	private int nbPlayers;
+	private int gameMode;
 	
 	private static final String GAME_OVER_TEXT="Game Over!";
 
