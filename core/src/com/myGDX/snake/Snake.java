@@ -37,7 +37,7 @@ public class Snake {
 	private Array<Point> previousPositions = new Array<Point>();
 
 	public static enum STATE {
-		ALIVE, DEAD
+		ALIVE, DEAD, DYING
 	}
 	private STATE state=STATE.ALIVE;
 
@@ -92,6 +92,8 @@ public class Snake {
 	}
 
 	public void update(int windowHeight, int windowWidth, int appleX, int appleY, int appleHeight, int appleWidth, Array<Snake> snakes){
+		if(state == STATE.DEAD || state == STATE.DYING)
+			return;
 		move();
 		checkForOutOfBounds(windowHeight, windowWidth);
 		updateBodyPartsPosition();
@@ -161,7 +163,7 @@ public class Snake {
 		for(int i = 1; i < bodyParts.size; i++){
 			BodyPart bodyPart = bodyParts.get(i);
 			if(isOverlapping(bodyPart.getX(), bodyPart.getY(), snakeBody.getHeight(), snakeBody.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
-				state = STATE.DEAD;
+				state = STATE.DYING;
 			}
 		}
 		return false;
@@ -174,7 +176,7 @@ public class Snake {
 				continue;
 			for(BodyPart otherBodyPart : otherSnake.getBodyParts()){
 				if(isOverlapping(otherBodyPart.getX(), otherBodyPart.getY(), snakeBody.getHeight(), snakeBody.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
-					state = STATE.DEAD;
+					state = STATE.DYING;
 				}
 			}
 		}
@@ -218,11 +220,15 @@ public class Snake {
 	}
 
 	public void draw(Batch batch){
-		if(state == STATE.DEAD){
+		if(state == STATE.DEAD) 
+			return;
+		if(state == STATE.DYING){
+			elapsedTime += Gdx.graphics.getDeltaTime();
 			for(BodyPart bodyPart:bodyParts){
-				elapsedTime += Gdx.graphics.getDeltaTime();
-				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 				batch.draw((TextureRegion) animation.getKeyFrame(elapsedTime,false),bodyPart.getX(),bodyPart.getY());
+				System.out.println(elapsedTime);
+				if(elapsedTime > 1)
+					state = STATE.DEAD;
 			}
 			return;
 		}
