@@ -49,6 +49,7 @@ public class Snake {
 		snakeHead = new Texture(Gdx.files.internal("snakeHead" + getColorNumber(color) + ".png"));
 		snakeBody = new Texture(Gdx.files.internal("snakeBody" + getColorNumber(color) + ".png"));
 		this.game = game;
+		create();
 	}
 
 	public void create () {
@@ -65,7 +66,7 @@ public class Snake {
 			}
 		}
 
-		animation = new Animation(1f/4f,animationFrames);
+		animation = new Animation(1f/3f,animationFrames);
 	}
 
 	public static int getColorNumber(Color color){
@@ -217,18 +218,17 @@ public class Snake {
 	}
 
 	public void draw(Batch batch){
-		batch.draw(snakeHead, snakeX, snakeY); 
-		for(BodyPart bodyPart:bodyParts){
-			bodyPart.draw(batch);
-		}
 		if(state == STATE.DEAD){
 			for(BodyPart bodyPart:bodyParts){
 				elapsedTime += Gdx.graphics.getDeltaTime();
 				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-				batch.begin();
-				batch.draw((TextureRegion) animation.getKeyFrame(elapsedTime,true),bodyPart.getX(),bodyPart.getY());
-				batch.end();
+				batch.draw((TextureRegion) animation.getKeyFrame(elapsedTime,false),bodyPart.getX(),bodyPart.getY());
 			}
+			return;
+		}
+		batch.draw(snakeHead, snakeX, snakeY);
+		for(BodyPart bodyPart:bodyParts){
+			bodyPart.draw(batch);
 		}
 	}
 
