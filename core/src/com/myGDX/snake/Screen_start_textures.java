@@ -8,10 +8,12 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -128,7 +130,7 @@ public class Screen_start_textures implements Screen{
             public void clicked(InputEvent event, float x, float y){
                 button_jeu.addAction(Actions.fadeOut(0.7f));
                 table.clearChildren();
-                game.setScreen(new GameScreen(2, 0));
+                game.setScreen(new GameScreen(game,2, 0));
             }
         });
 
@@ -158,9 +160,10 @@ public class Screen_start_textures implements Screen{
     public void render(float delta) {
         Gdx.gl.glClearColor(1,1,1,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stateTime += Gdx.graphics.getDeltaTime();
 
+        stateTime += Gdx.graphics.getDeltaTime();
         TextureRegion currentFrame = playAnimation.getKeyFrame(stateTime, true);
+
         batch.begin();
         stage.draw();
         batch.draw(currentFrame, 50, 50); // Draw current frame at (50, 50)
@@ -168,6 +171,12 @@ public class Screen_start_textures implements Screen{
         stage.getBatch().draw(texture_background,0,0);
         stage.getBatch().draw(texture_upground,0,0);
         stage.getBatch().end();
+        Drawable drawer = (Drawable)new TextureRegionDrawable(currentFrame);
+        drawer.setMinHeight(800);
+        drawer.setMinWidth(1280);
+        ImageButton.ImageButtonStyle test = new ImageButton.ImageButtonStyle();
+        test.imageUp = drawer;
+        button_jeu.setStyle(test);
         stage.draw();
         batch.end();
     }

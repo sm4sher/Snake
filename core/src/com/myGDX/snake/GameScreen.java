@@ -48,9 +48,11 @@ public class GameScreen extends ScreenAdapter {
 	
 	private static final String GAME_OVER_TEXT="Game Over!";
 
+	private SnakeGame game;
 
-	public GameScreen(int nbPlayers, int gameMode){
+	public GameScreen(SnakeGame game, int nbPlayers, int gameMode){
 		super();
+		this.game = game;
 		this.nbPlayers = nbPlayers;
 		this.gameMode = gameMode;
 	}
@@ -163,7 +165,8 @@ public class GameScreen extends ScreenAdapter {
 		}
 		if (state == STATE.GAME_OVER) {
 			new BitmapFont().draw(batch, GAME_OVER_TEXT, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
-        }
+        	game.setScreen(new Screen_start_textures(game));
+		}
         batch.draw(bgSupp, 0, 0);
 		batch.end();
 	}
