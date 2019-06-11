@@ -16,7 +16,6 @@ import java.awt.Point;
 public class GameScreen extends ScreenAdapter {
 
 	private SpriteBatch batch;
-	private Texture snakeHead;
 	
 	private static final float MOVE_TIME= 0.017F;
 	private float timer = MOVE_TIME;
@@ -26,10 +25,9 @@ public class GameScreen extends ScreenAdapter {
 	private static final int UP=2;
 	private static final int DOWN=3;
 	
-	
+	private Texture bc = new Texture("bc.png");
 	private Texture apple;
 	private boolean appleAvailable=false;
-	public boolean explode = true;
 	private int appleX, appleY;
 	
 	private enum STATE {
@@ -40,23 +38,13 @@ public class GameScreen extends ScreenAdapter {
 
 	private Array<Snake> snakes = new Array<Snake>();
 
+	boolean dying = false;
 	
 	private static final String GAME_OVER_TEXT="Game Over!";
 
-	// Constant rows and columns of the sprite sheet
-	private static final int FRAME_COLS = 3, FRAME_ROWS = 3;
-
-	// Objects used
-	public Animation<TextureRegion> snakeDieAnim; // Must declare frame type (TextureRegion)
-	private Texture snakeDieSheet=new Texture(Gdx.files.internal("snakeDie.png"));
-
-	// A variable for tracking elapsed time for the animation
-	private float stateTime = 0;
-	public TextureRegion currentFrame;
 
 	@Override
 	public void show(){
-		create();
 		batch=new SpriteBatch();
 		apple=new Texture(Gdx.files.internal("apple.png"));
 		snakes.add(new Snake(this, Snake.Color.GREEN, 0, 0));
@@ -64,34 +52,9 @@ public class GameScreen extends ScreenAdapter {
 		numberAlives = snakes.size;
 	}
 
-	private void create() {
-
-		TextureRegion[][] tmp = TextureRegion.split(snakeDieSheet,
-				snakeDieSheet.getWidth() / FRAME_COLS,
-				snakeDieSheet.getHeight() / FRAME_ROWS);
-
-		// Place the regions into a 1D array in the correct order, starting from the top
-		// left, going across first. The Animation constructor requires a 1D array.
-		TextureRegion[] walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
-		int index = 0;
-		for (int i = 0; i < FRAME_ROWS; i++) {
-			for (int j = 0; j < FRAME_COLS; j++) {
-				walkFrames[index++] = tmp[i][j];
-			}
-		}
-
-		// Initialize the Animation with the frame interval and array of frames
-		snakeDieAnim = new Animation<TextureRegion>(0.025f, walkFrames);
-
-		// Instantiate a SpriteBatch for drawing and reset the elapsed animation
-		// time to 0
-		stateTime = 0f;
-	}
-
 	@Override
 	public void render(float delta){
-		if(numberAlives == 0)
-			state = STATE.GAME_OVER;
+		if(numberAlives == 0) state = STATE.GAME_OVER;
 		switch(state){
 		case PLAYING: {
 			queryInput();
@@ -142,7 +105,6 @@ public class GameScreen extends ScreenAdapter {
 		if (dPressed2) snakes.get(1).updateDirection(DOWN);
 	}
 	
-	//TODO: Empecher d'apparaitre sur tout le corps du serpent, pas seulement la tête
 	private void checkAndPlaceApple(){
 		if(!appleAvailable){
 			boolean onASnake;
@@ -177,12 +139,8 @@ public class GameScreen extends ScreenAdapter {
 	
 	private void draw(){
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
-		stateTime += Gdx.graphics.getDeltaTime();
-		currentFrame = snakeDieAnim.getKeyFrame(stateTime, true);
 		batch.begin();
-		if (explode){
-			batch.draw(currentFrame, 0, 0);
-		}
+		batch.draw(bc, 0, 0);
 		for(Snake snake : snakes)
 			snake.draw(batch);
 
@@ -192,6 +150,7 @@ public class GameScreen extends ScreenAdapter {
 		if (state == STATE.GAME_OVER) {
 			new BitmapFont().draw(batch, GAME_OVER_TEXT, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
         }
+
 		batch.end();
 	}
 }

@@ -1,6 +1,9 @@
 package com.myGDX.snake;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -11,12 +14,17 @@ public class Snake {
 	private Texture snakeHead;
 	
 	public static final int SNAKE_MOVEMENT=8;
-	private int snakeX=0, snakeY=0;
+	public int snakeX=0, snakeY=0;
 	private static final int RIGHT=0;
 	private static final int LEFT=1;
 	private static final int UP=2;
 	private static final int DOWN=3;
-	
+
+	Texture snakeDie;
+	TextureRegion[] animationFrames;
+	Animation animation;
+	float elapsedTime;
+
 	public static enum Color {
 		GREEN, BLUE, ORANGE, RED
 	}
@@ -41,6 +49,23 @@ public class Snake {
 		snakeHead = new Texture(Gdx.files.internal("snakeHead" + getColorNumber(color) + ".png"));
 		snakeBody = new Texture(Gdx.files.internal("snakeBody" + getColorNumber(color) + ".png"));
 		this.game = game;
+	}
+
+	public void create () {
+		snakeDie = new Texture("snakeDie.png");
+
+		TextureRegion[][] tmpFrames = TextureRegion.split(snakeDie,32,32);
+
+		animationFrames = new TextureRegion[4];
+		int index = 0;
+
+		for (int i = 0; i < 2; i++){
+			for(int j = 0; j < 2; j++) {
+				animationFrames[index++] = tmpFrames[j][i];
+			}
+		}
+
+		animation = new Animation(1f/4f,animationFrames);
 	}
 
 	public static int getColorNumber(Color color){
@@ -192,11 +217,18 @@ public class Snake {
 	}
 
 	public void draw(Batch batch){
-		if(state == STATE.DEAD)
-			return;
 		batch.draw(snakeHead, snakeX, snakeY); 
 		for(BodyPart bodyPart:bodyParts){
 			bodyPart.draw(batch);
+		}
+		if(state == STATE.DEAD){
+			for(BodyPart bodyPart:bodyParts){
+				elapsedTime += Gdx.graphics.getDeltaTime();
+				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+				batch.begin();
+				batch.draw((TextureRegion) animation.getKeyFrame(elapsedTime,true),bodyPart.getX(),bodyPart.getY());
+				batch.end();
+			}
 		}
 	}
 
@@ -207,5 +239,11 @@ public class Snake {
 		int right2 = x2 + w2;
 		return !(y1 >= top2 || y2 >= top1 || x1 >= right2 || x2 >= right1);
 
+	}
+	public int getSnakeX(){
+		return this.snakeX;
+	}
+	public int getSnakeY(){
+		return this.snakeY;
 	}
 }
