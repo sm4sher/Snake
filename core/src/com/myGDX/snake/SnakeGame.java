@@ -6,7 +6,7 @@ import com.badlogic.gdx.Screen;
 public class SnakeGame extends Game {
 	@Override
 	public void create () {
-		setScreen(new Screen_start(this));
+		setScreen(new Screen_start_textures(this));
 	}
 
 }
