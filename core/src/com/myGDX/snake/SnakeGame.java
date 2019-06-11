@@ -8,5 +8,4 @@ public class SnakeGame extends Game {
 	public void create () {
 		setScreen(new Screen_start(this));
 	}
-
 }
