@@ -3,6 +3,7 @@ package com.myGDX.snake;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -50,11 +51,17 @@ public class GameScreen extends ScreenAdapter {
 
 	private SnakeGame game;
 
+	Sound sound;
+	long id;
+
 	public GameScreen(SnakeGame game, int nbPlayers, int gameMode){
 		super();
 		this.game = game;
 		this.nbPlayers = nbPlayers;
 		this.gameMode = gameMode;
+		sound = Gdx.audio.newSound(Gdx.files.internal("doom.wav"));
+		id = sound.play(2.0f);
+		sound.setLooping(id, true);
 	}
 
 	@Override
@@ -166,6 +173,7 @@ public class GameScreen extends ScreenAdapter {
 		if (state == STATE.GAME_OVER) {
 			new BitmapFont().draw(batch, GAME_OVER_TEXT, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
         	game.setScreen(new Screen_start_textures(game));
+        	sound.stop();
 		}
         batch.draw(bgSupp, 0, 0);
 		batch.end();
