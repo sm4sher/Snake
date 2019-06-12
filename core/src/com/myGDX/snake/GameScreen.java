@@ -10,8 +10,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
+
+import java.util.ArrayList;
+import java.awt.Point;
 
 public class GameScreen extends ScreenAdapter {
 
@@ -41,7 +43,8 @@ public class GameScreen extends ScreenAdapter {
 	private STATE state=STATE.PLAYING;
 	private int numberAlives;
 
-	private Array<Snake> snakes = new Array<Snake>();
+	private ArrayList<Snake> snakes = new ArrayList<Snake>();
+	private ArrayList<Bonus> bonuses = new ArrayList<Bonus>();
 
 	private boolean dying = false;
 	private boolean nbPlayers;
@@ -76,7 +79,7 @@ public class GameScreen extends ScreenAdapter {
 		snakes.add(new Snake(this, Snake.Color.GREEN, 0, 0));
 		if(nbPlayers)
 			snakes.add(new Snake(this, Snake.Color.RED, 50, 50));
-		numberAlives = snakes.size;
+		numberAlives = snakes.size();
 	}
 
 	@Override
@@ -94,12 +97,12 @@ public class GameScreen extends ScreenAdapter {
 				timer=MOVE_TIME;
 				numberAlives = 0;
 				for(Snake snake : snakes){
-					snake.update(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), appleX, appleY, apple.getHeight(), apple.getWidth(), snakes);
+					snake.update(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), bonuses, snakes);
 					if(snake.getState() == Snake.STATE.ALIVE)
 						numberAlives++;
 				}
 			}
-			checkAndPlaceApple();
+			checkAndPlaceBonus();
 		}
 		break;
 		case GAME_OVER:{
@@ -136,25 +139,54 @@ public class GameScreen extends ScreenAdapter {
 		if (dPressed2) snakes.get(1).updateDirection(DOWN);
 	}
 	
-	private void checkAndPlaceApple(){
-		if(!appleAvailable){
-			boolean onASnake;
+	private void checkAndPlaceBonus(){
+		int nbBonuses = getNbBonusesAvailable();
+		if(nbBonuses < 3){
+			boolean onSomething;
+			int bonusX;
+			int bonusY;
 			do{
-				int pomme_x = Gdx.graphics.getBackBufferHeight()/Snake.SNAKE_MOVEMENT-1;
-				int pomme_y = Gdx.graphics.getHeight()/Snake.SNAKE_MOVEMENT-1;
-				appleX=MathUtils.random(pomme_x*1/4,pomme_x*3/4)*Snake.SNAKE_MOVEMENT;
-				appleY=MathUtils.random(pomme_y*1/4,pomme_x*3/4)*Snake.SNAKE_MOVEMENT;
-				appleAvailable=true;
-				onASnake = false;
+				int bonus_x = Gdx.graphics.getBackBufferHeight()/Snake.SNAKE_MOVEMENT-1;
+				int bonus_y = Gdx.graphics.getHeight()/Snake.SNAKE_MOVEMENT-1;
+				bonusX=MathUtils.random(bonus_x*1/4,bonus_x*3/4)*Snake.SNAKE_MOVEMENT;
+				bonusY=MathUtils.random(bonus_y*1/4,bonus_y*3/4)*Snake.SNAKE_MOVEMENT;
+
+				onSomething = false;
 				for(Snake snake : snakes){
-					if(snake.isOnSnake(appleX, appleY, apple.getHeight(), apple.getWidth())){
-						onASnake = true;
+					if(snake.isOnSnake(bonusX, bonusY, Apple.texture.getHeight(), Apple.texture.getWidth())){
+						onSomething = true;
 						break;
 					}
 				}
+				// if(!onSomething){
+				// 	for(Bonus bonus : bonuses){
+				// 		if(isOverlapping(appleX, appleY, apple.getHeight(), apple.getWidth())){
+				// 			onSomething = true;
+				// 			break;
+				// 		}
+				// 	}
+				// }
+			} while(onSomething);
+			float proba = MathUtils.random();
 
-			} while(onASnake);
+			System.out.println(proba);
+			if(proba < 0.99 && nbBonuses > 0)
+				return;
+			else if (proba < 0.995)
+				bonuses.add(new Apple(new Point(bonusX, bonusY)));
+			else if (proba < 0.9999)
+				bonuses.add(new Bug(new Point(bonusX, bonusY)));
+			else
+				bonuses.add(new Banana(new Point(bonusX, bonusY)));
 		}
+	}
+
+	public int getNbBonusesAvailable(){
+		int nb = 0;
+		for(Bonus bonus : bonuses)
+			if(!bonus.isEaten())
+				nb++;
+		return nb;
 	}
 
 	public void setAppleAvailable(boolean available){
@@ -176,10 +208,9 @@ public class GameScreen extends ScreenAdapter {
 		batch.draw(bc, 0, 0);
 		for(Snake snake : snakes)
 			snake.draw(batch);
+		for(Bonus bonus : bonuses)
+			bonus.draw(batch);
 
-		if (appleAvailable) {
-		batch.draw(apple, appleX, appleY);
-		}
 		if (state == STATE.GAME_OVER) {
 			new BitmapFont().draw(batch, GAME_OVER_TEXT, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 			if(!nbPlayers){

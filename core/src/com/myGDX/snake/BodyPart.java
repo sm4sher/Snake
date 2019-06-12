@@ -2,17 +2,17 @@ package com.myGDX.snake;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.utils.Array;
 
+import java.util.ArrayList;
 import java.awt.Point;
 
 class BodyPart {
 	private int x,y;
 	private int positionIndex;
-	private Array<Point> previousPositions;
+	private ArrayList<Point> previousPositions;
 	private Texture texture;
 
-	public BodyPart(Texture texture, Array<Point> previousPositions, int positionIndex){
+	public BodyPart(Texture texture, ArrayList<Point> previousPositions, int positionIndex){
 		this.texture=texture;
 		this.previousPositions = previousPositions;
 		this.positionIndex = positionIndex;
