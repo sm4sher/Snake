@@ -82,10 +82,6 @@ public class GameScreen extends ScreenAdapter {
 		Gdx.input.setCursorPosition(0,0);
 	}
 
-	public int get_score(){
-		return score;
-	}
-
 	@Override
 	public void show(){
 		batch=new SpriteBatch();
@@ -127,7 +123,7 @@ public class GameScreen extends ScreenAdapter {
 		break;
 		}		
 		clearScreen();
-		draw();
+		draw(delta);
 	}
 	
 	private void queryInput_solo() {
@@ -221,14 +217,14 @@ public class GameScreen extends ScreenAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	}
 	
-	private void draw(){
+	private void draw(float delta){
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
 		batch.begin();
 		batch.draw(bc, 0, 0);
 		for(Snake snake : snakes)
 			snake.draw(batch);
 		for(Bonus bonus : bonuses)
-			bonus.draw(batch);
+			bonus.draw(batch, delta);
 
 		if (state == STATE.GAME_OVER) {
 			sound.stop();
