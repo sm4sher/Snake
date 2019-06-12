@@ -10,8 +10,8 @@ import java.awt.Point;
 public class Banana extends Bonus {
 	public static Texture texture = new Texture("banana.png");
 
-	public Banana(Point pos){
-		super(pos);
+	public Banana(){
+		super();
 		sound = Gdx.audio.newSound(Gdx.files.internal("beep.wav"));
 		_texture = texture;
 	}

@@ -13,7 +13,11 @@ public abstract class Bonus {
 	protected Sound sound;
 	protected boolean eaten;
 
-	public Bonus(Point pos){
+	public Bonus(){
+		eaten = true; //On ne l'affiche pas encore tant qu'on a pas sa position
+	}
+
+	public void setPos(Point pos){
 		this.pos = pos;
 		eaten = false;
 	}
@@ -36,6 +40,10 @@ public abstract class Bonus {
 
 	public boolean isEaten(){
 		return eaten;
+	}
+
+	public boolean isOnBonus(int x, int y, int height, int width){
+		return Util.isOverlapping(x, y, height, width, getX(), getY(), getHeight(), getWidth());
 	}
 
 	public abstract void collision(Snake snake);
