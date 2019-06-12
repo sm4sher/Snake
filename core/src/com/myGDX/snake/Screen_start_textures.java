@@ -36,6 +36,8 @@ public class Screen_start_textures implements Screen{
 
     private String string_mode_up = "texture_mode_up.png";
     private String string_mode_down = "texture_mode_down.png";
+    private String string_mode_disabled = "texture_mode_disabled.png";
+    private TextureRegionDrawable drawable_mode_disabled;
     private Double_button double_mode;
     private ImageButton button_mode;
 
@@ -85,6 +87,10 @@ public class Screen_start_textures implements Screen{
 
 
     public Screen_start_textures(SnakeGame _game){
+        drawable_mode_disabled = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal(string_mode_disabled))));
+        drawable_mode_disabled.setMinWidth(240);
+        drawable_mode_disabled.setMinHeight(96);
+
         game = _game;
         create();
         batch = new SpriteBatch();
@@ -103,7 +109,15 @@ public class Screen_start_textures implements Screen{
         table.row().height(146).width(240);
 
         double_mode = new Double_button(string_mode_up, string_mode_down);
-        button_mode = new ImageButton(double_mode.texture_draw(true), double_mode.texture_draw(false), double_mode.texture_draw(false));
+        ImageButton.ImageButtonStyle test = new ImageButton.ImageButtonStyle();
+
+        test.imageUp = double_mode.texture_draw(true);
+        test.imageChecked = double_mode.texture_draw(false);
+        test.imageDisabled = drawable_mode_disabled;
+
+        button_mode = new ImageButton(test);
+        button_mode.setDisabled(true);
+
         table.add(button_mode);
         table.row().height(106).width(240);
 
@@ -111,11 +125,10 @@ public class Screen_start_textures implements Screen{
         region_jeu = new TextureRegion(texture_jeu);
         drawable_jeu = new TextureRegionDrawable(region_jeu);
         button_jeu = new ImageButton(drawable_jeu);
+        table.add(button_jeu);
 
         texture_background = new Texture("menuBG.png");
         texture_upground = new Texture("bgSupp.png");
-
-        table.add(button_jeu);
 
         stage.addActor(table);
 
@@ -133,9 +146,16 @@ public class Screen_start_textures implements Screen{
         button_multi.addListener(new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
                 id = sound.play(1.0f);
-                button_multi.addAction(Actions.fadeOut(0.7f));
+                button_mode.addAction(Actions.fadeOut(0.7f));
                 double_multi.update_state();
                 button_multi.setChecked(double_multi.get_state());
+
+                if(!double_multi.get_state()){
+                    button_mode.setDisabled(true);
+                }
+                else{
+                    button_mode.setDisabled(false);
+                }
             }
         });
 
@@ -173,12 +193,14 @@ public class Screen_start_textures implements Screen{
         stage.getBatch().draw(texture_background,0,0);
         stage.getBatch().draw(texture_upground,0,0);
         stage.getBatch().end();
+
         Drawable drawer = (Drawable)new TextureRegionDrawable(currentFrame);
         drawer.setMinHeight(800);
         drawer.setMinWidth(1280);
         ImageButton.ImageButtonStyle test = new ImageButton.ImageButtonStyle();
         test.imageUp = drawer;
         button_jeu.setStyle(test);
+
         stage.draw();
         batch.end();
     }

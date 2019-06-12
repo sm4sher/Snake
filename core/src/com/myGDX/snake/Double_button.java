@@ -27,6 +27,7 @@ public class Double_button{
         drawable_button_down = new TextureRegionDrawable(texture_region);
         drawable_button_down.setMinWidth(width);
         drawable_button_down.setMinHeight(height);
+        state = false;
     }
 
     public TextureRegionDrawable texture_draw(boolean state){

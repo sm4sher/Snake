@@ -54,7 +54,6 @@ public class GameScreen extends ScreenAdapter {
 	Sound sound;
 	long id;
 	int score;
-	Timer time;
 
 	public GameScreen(SnakeGame game, boolean nbPlayers, boolean gameMode){
 		super();
@@ -66,8 +65,6 @@ public class GameScreen extends ScreenAdapter {
 		id = sound.play(2.0f);
 		sound.setLooping(id, true);
 		score = 0;
-		time = new Timer();
-		time.start();
 	}
 
 	@Override
@@ -185,9 +182,17 @@ public class GameScreen extends ScreenAdapter {
 		}
 		if (state == STATE.GAME_OVER) {
 			new BitmapFont().draw(batch, GAME_OVER_TEXT, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
-			new BitmapFont().draw(batch,"socre joueur 1 : " + Integer.toString(snakes.get(0).get_score()), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*3/4);
-			if(nbPlayers){
-				new BitmapFont().draw(batch,"socre joueur 2 : " + Integer.toString(snakes.get(1).get_score()), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*2/3);
+			if(!nbPlayers){
+				new BitmapFont().draw(batch,"score joueur : " + Integer.toString(snakes.get(0).get_score()), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*3/4);
+			}
+			else if(nbPlayers){
+				if(!gameMode){
+					new BitmapFont().draw(batch,"score joueurs : " + Integer.toString(snakes.get(0).get_score()+snakes.get(1).get_score()), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*3/4);
+				}
+				else{
+					new BitmapFont().draw(batch,"score joueur 1 : " + Integer.toString(snakes.get(0).get_score()), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*3/4);
+					new BitmapFont().draw(batch,"score joueur 2 : " + Integer.toString(snakes.get(1).get_score()), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*2/3);
+				}
 			}
 			Timer.schedule(new Timer.Task(){
 							   @Override
