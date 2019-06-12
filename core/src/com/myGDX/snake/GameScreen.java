@@ -2,6 +2,7 @@ package com.myGDX.snake;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
@@ -59,6 +60,7 @@ public class GameScreen extends ScreenAdapter {
 	long id;
 	int num_music;
 	int score;
+	int current_score;
 
 	public GameScreen(SnakeGame game, boolean nbPlayers, boolean gameMode, int num_music){
 		super();
@@ -76,6 +78,8 @@ public class GameScreen extends ScreenAdapter {
 		id = sound.play(2.0f);
 		sound.setLooping(id,true);
 		score = 0;
+
+		Gdx.input.setCursorPosition(0,0);
 	}
 
 	public int get_score(){
@@ -230,14 +234,18 @@ public class GameScreen extends ScreenAdapter {
 			sound.stop();
 
 			new BitmapFont().draw(batch, GAME_OVER_TEXT, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+			current_score=0;
 			if(!nbPlayers){
-				new BitmapFont().draw(batch,"score joueur : " + Integer.toString(snakes.get(0).get_score()), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*3/4);
+				current_score = snakes.get(0).get_score();
+				new BitmapFont().draw(batch,"score joueur : " + Integer.toString(current_score), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*3/4);
 			}
 			else if(nbPlayers){
 				if(!gameMode){
-					new BitmapFont().draw(batch,"score joueurs : " + Integer.toString(snakes.get(0).get_score()+snakes.get(1).get_score()), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*3/4);
+					current_score = snakes.get(0).get_score()+snakes.get(1).get_score();
+					new BitmapFont().draw(batch,"score joueurs : " + Integer.toString(current_score), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*3/4);
 				}
 				else{
+					current_score = Math.max(snakes.get(0).get_score(),snakes.get(1).get_score());
 					new BitmapFont().draw(batch,"score joueur 1 : " + Integer.toString(snakes.get(0).get_score()), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*3/4);
 					new BitmapFont().draw(batch,"score joueur 2 : " + Integer.toString(snakes.get(1).get_score()), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*2/3);
 				}
@@ -247,7 +255,7 @@ public class GameScreen extends ScreenAdapter {
 							   @Override
 							   public void run() {
 							   	Timer.instance().clear();
-								   game.setScreen(new Screen_start_textures(game));
+								   game.setScreen(new Screen_start_textures(game,current_score));
 							   }
 						   },3);
 		}

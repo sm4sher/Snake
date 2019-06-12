@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -23,15 +22,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import javax.swing.*;
-
 public class Screen_start_textures implements Screen{
 
     private SpriteBatch batch;
     private Stage stage;
     private Table table;
     Preferences prefs = Gdx.app.getPreferences("game preferences");
-    public int currentScore = 0;
+    public int current_score = prefs.getInteger("current_score");
     public int highscore = prefs.getInteger("highscore");
 
     private String string_multi_up = "texture_multi_up.png";
@@ -97,16 +94,22 @@ public class Screen_start_textures implements Screen{
     }
 
 
-    public Screen_start_textures(SnakeGame _game){
+    public Screen_start_textures(SnakeGame _game, int current_score){
         create();
 
         game = _game;
         batch = new SpriteBatch();
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
-
         Gdx.graphics.setCursor(Gdx.graphics.newCursor(cursor, 0, 0));
         cursor.dispose();
+
+        this.current_score = current_score;
+        if (current_score > highscore) {
+            prefs.putInteger("highscore", current_score);
+            prefs.flush();
+        }
+        highscore = prefs.getInteger("highscore");
 
         sound = Gdx.audio.newSound(Gdx.files.internal("boutton.wav"));
         texture_background = new Texture("menuBG.png");
@@ -202,10 +205,6 @@ public class Screen_start_textures implements Screen{
 
     @Override
     public void render(float delta) {
-        if (currentScore > highscore) {
-            prefs.putInteger("highscore", highscore);
-            prefs.flush();
-        }
         Gdx.gl.glClearColor(1,1,1,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
