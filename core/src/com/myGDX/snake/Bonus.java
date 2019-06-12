@@ -12,9 +12,11 @@ public abstract class Bonus {
 	protected Texture _texture;
 	protected Sound sound;
 	protected boolean eaten;
+	protected float age;
 
 	public Bonus(){
 		eaten = true; //On ne l'affiche pas encore tant qu'on a pas sa position
+		age = 0f;
 	}
 
 	public void setPos(Point pos){
@@ -48,9 +50,12 @@ public abstract class Bonus {
 
 	public abstract void collision(Snake snake);
 
-	public void draw(Batch batch){
+	public void draw(Batch batch, float delta){
 		if(eaten)
 			return;
+		age += delta;
+		if(age > 15)
+			eaten = true;
 		batch.draw(_texture, pos.x, pos.y);
 	}
 }
