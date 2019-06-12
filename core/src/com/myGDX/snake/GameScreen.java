@@ -172,7 +172,6 @@ public class GameScreen extends ScreenAdapter {
 			} while(onSomething);
 			float proba = MathUtils.random();
 
-			System.out.println(proba);
 			if(proba < 0.995 && nbBonuses > 0)
 				return;
 			else if (proba < 0.999)

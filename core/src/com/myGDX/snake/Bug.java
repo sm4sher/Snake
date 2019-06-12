@@ -17,8 +17,8 @@ public class Bug extends Bonus {
 	}
 
 	public void collision(Snake snake){
-		snake.addBodyParts(1);
-		snake.addScore(1);
+		snake.removeBodyParts(1);
+		snake.addScore(-1);
 		sound.play(2.0f);
 		eaten = true;
 	}

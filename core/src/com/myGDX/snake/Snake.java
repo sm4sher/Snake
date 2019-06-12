@@ -83,6 +83,13 @@ public class Snake {
 		}
 	}
 
+	public void removeBodyParts(int nb){
+		nb = Math.min(nb, bodyParts.size());
+		for(int i = 0; i < nb; i++){
+			bodyParts.remove(bodyParts.size()-1);
+		}
+	}
+
 	public int get_score(){
 		return score;
 	}
