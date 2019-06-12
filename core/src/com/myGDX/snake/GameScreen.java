@@ -173,9 +173,9 @@ public class GameScreen extends ScreenAdapter {
 			float proba = MathUtils.random();
 
 			System.out.println(proba);
-			if(proba < 0.99 && nbBonuses > 0)
+			if(proba < 0.995 && nbBonuses > 0)
 				return;
-			else if (proba < 0.995)
+			else if (proba < 0.999)
 				bonuses.add(new Apple(new Point(bonusX, bonusY)));
 			else if (proba < 0.9999)
 				bonuses.add(new Bug(new Point(bonusX, bonusY)));
