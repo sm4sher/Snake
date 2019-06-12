@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -72,6 +73,8 @@ public class Screen_start_textures implements Screen{
     private long id;
     private int num_music=1;
 
+    Pixmap cursor = new Pixmap(Gdx.files.internal("cursor.png"));
+
     protected void create() {
 
         walkSheet = new Texture(Gdx.files.internal("playSheet.png"));
@@ -101,6 +104,9 @@ public class Screen_start_textures implements Screen{
         batch = new SpriteBatch();
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
+
+        Gdx.graphics.setCursor(Gdx.graphics.newCursor(cursor, 0, 0));
+        cursor.dispose();
 
         sound = Gdx.audio.newSound(Gdx.files.internal("boutton.wav"));
         texture_background = new Texture("menuBG.png");
