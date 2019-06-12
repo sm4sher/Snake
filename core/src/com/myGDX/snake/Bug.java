@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 
 import java.awt.Point;
 
-public class Apple extends Bonus {
-	public static Texture texture = new Texture("apple.png");
+public class Bug extends Bonus {
+	public static Texture texture = new Texture("bug.png");
 
-	public Apple(Point pos){
+	public Bug(Point pos){
 		super(pos);
 		sound = Gdx.audio.newSound(Gdx.files.internal("beep.wav"));
 		_texture = texture;

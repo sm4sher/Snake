@@ -7,18 +7,18 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 
 import java.awt.Point;
 
-public class Apple extends Bonus {
-	public static Texture texture = new Texture("apple.png");
+public class Banana extends Bonus {
+	public static Texture texture = new Texture("banana.png");
 
-	public Apple(Point pos){
+	public Banana(Point pos){
 		super(pos);
 		sound = Gdx.audio.newSound(Gdx.files.internal("beep.wav"));
 		_texture = texture;
 	}
 
 	public void collision(Snake snake){
-		snake.addBodyParts(1);
-		snake.addScore(1);
+		snake.addBodyParts(5);
+		snake.addScore(10);
 		sound.play(2.0f);
 		eaten = true;
 	}

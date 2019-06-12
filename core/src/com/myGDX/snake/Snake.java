@@ -231,7 +231,7 @@ public class Snake {
 
 	public void checkBonusCollision(ArrayList<Bonus> bonuses){
 		for(Bonus bonus : bonuses){
-			if(!bonus.isEaten() && isOverlapping(snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth(), bonus.getX(), bonus.getY(), bonus.getHeight(), bonus.getWidth())){
+			if(!bonus.isEaten() && isOnSnake(bonus.getX(), bonus.getY(), bonus.getHeight(), bonus.getWidth())){
 				bonus.collision(this);
 			}
 		}

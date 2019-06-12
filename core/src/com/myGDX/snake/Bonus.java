@@ -9,7 +9,7 @@ import java.awt.Point;
 
 public abstract class Bonus {
 	protected Point pos;
-	protected Texture texture;
+	protected Texture _texture;
 	protected Sound sound;
 	protected boolean eaten;
 
@@ -27,11 +27,11 @@ public abstract class Bonus {
 	}
 
 	public int getHeight(){
-		return texture.getHeight();
+		return _texture.getHeight();
 	}
 
 	public int getWidth(){
-		return texture.getWidth();
+		return _texture.getWidth();
 	}
 
 	public boolean isEaten(){
@@ -43,6 +43,6 @@ public abstract class Bonus {
 	public void draw(Batch batch){
 		if(eaten)
 			return;
-		batch.draw(texture, pos.x, pos.y);
+		batch.draw(_texture, pos.x, pos.y);
 	}
 }
