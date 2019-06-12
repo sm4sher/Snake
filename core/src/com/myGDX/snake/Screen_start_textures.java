@@ -36,12 +36,12 @@ public class Screen_start_textures implements Screen{
 
     private String string_mode_up = "texture_mode_up.png";
     private String string_mode_down = "texture_mode_down.png";
+    private String string_mode_disabled = "texture_mode_disabled.png";
     private Double_button double_mode;
     private ImageButton button_mode;
 
-    private Texture texture_jeu;
-    private TextureRegion region_jeu;
-    private TextureRegionDrawable drawable_jeu;
+    private String string_jeu = "texture_jeu.gif";
+    private Double_button double_jeu;
     private ImageButton button_jeu;
 
     private Texture texture_background;
@@ -85,41 +85,40 @@ public class Screen_start_textures implements Screen{
 
 
     public Screen_start_textures(SnakeGame _game){
-        game = _game;
         create();
+
+        game = _game;
         batch = new SpriteBatch();
         stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
 
         sound = Gdx.audio.newSound(Gdx.files.internal("boutton.wav"));
-
-        Gdx.input.setInputProcessor(stage);
+        texture_background = new Texture("menuBG.png");
+        texture_upground = new Texture("bgSupp.png");
 
         table = new Table();
         table.setSize(WorldWidth, WorldHeigth);
 
-        double_multi = new Double_button(string_multi_up, string_multi_down);
+        double_multi = new Double_button(string_multi_up, string_multi_down, string_multi_down);
         button_multi = new ImageButton(double_multi.texture_draw(true), double_multi.texture_draw(false), double_multi.texture_draw(false));
         table.add(button_multi);
+
         table.row().height(146).width(240);
 
-        double_mode = new Double_button(string_mode_up, string_mode_down);
-        button_mode = new ImageButton(double_mode.texture_draw(true), double_mode.texture_draw(false), double_mode.texture_draw(false));
+        double_mode = new Double_button(string_mode_up, string_mode_down, string_mode_disabled);
+        double_mode.set_style();
+
+        button_mode = new ImageButton(double_mode.getStyle());
+        button_mode.setDisabled(true);
         table.add(button_mode);
+
         table.row().height(106).width(240);
 
-        texture_jeu = new Texture(Gdx.files.internal("texture_jeu.gif"));
-        region_jeu = new TextureRegion(texture_jeu);
-        drawable_jeu = new TextureRegionDrawable(region_jeu);
-        button_jeu = new ImageButton(drawable_jeu);
-
-        texture_background = new Texture("menuBG.png");
-        texture_upground = new Texture("bgSupp.png");
-
+        double_jeu = new Double_button(string_jeu, string_jeu, string_jeu);
+        button_jeu = new ImageButton(double_jeu.texture_draw(true));
         table.add(button_jeu);
 
         stage.addActor(table);
-
-        Gdx.input.setInputProcessor(stage);
 
         button_jeu.addListener(new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
@@ -133,9 +132,16 @@ public class Screen_start_textures implements Screen{
         button_multi.addListener(new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
                 id = sound.play(1.0f);
-                button_multi.addAction(Actions.fadeOut(0.7f));
+                button_mode.addAction(Actions.fadeOut(0.7f));
                 double_multi.update_state();
                 button_multi.setChecked(double_multi.get_state());
+
+                if(!double_multi.get_state()){
+                    button_mode.setDisabled(true);
+                }
+                else{
+                    button_mode.setDisabled(false);
+                }
             }
         });
 
@@ -173,12 +179,14 @@ public class Screen_start_textures implements Screen{
         stage.getBatch().draw(texture_background,0,0);
         stage.getBatch().draw(texture_upground,0,0);
         stage.getBatch().end();
+
         Drawable drawer = (Drawable)new TextureRegionDrawable(currentFrame);
         drawer.setMinHeight(800);
         drawer.setMinWidth(1280);
         ImageButton.ImageButtonStyle test = new ImageButton.ImageButtonStyle();
         test.imageUp = drawer;
         button_jeu.setStyle(test);
+
         stage.draw();
         batch.end();
     }
