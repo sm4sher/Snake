@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
-
+import com.badlogic.gdx.utils.Timer;
 
 public class GameScreen extends ScreenAdapter {
 
@@ -44,8 +44,8 @@ public class GameScreen extends ScreenAdapter {
 	private Array<Snake> snakes = new Array<Snake>();
 
 	private boolean dying = false;
-	private int nbPlayers;
-	private int gameMode;
+	private boolean nbPlayers;
+	private boolean gameMode;
 	
 	private static final String GAME_OVER_TEXT="Game Over!";
 
@@ -53,15 +53,21 @@ public class GameScreen extends ScreenAdapter {
 
 	Sound sound;
 	long id;
+	int score;
+	Timer time;
 
-	public GameScreen(SnakeGame game, int nbPlayers, int gameMode){
+	public GameScreen(SnakeGame game, boolean nbPlayers, boolean gameMode){
 		super();
 		this.game = game;
 		this.nbPlayers = nbPlayers;
 		this.gameMode = gameMode;
+
 		sound = Gdx.audio.newSound(Gdx.files.internal("doom.wav"));
 		id = sound.play(2.0f);
 		sound.setLooping(id, true);
+		score = 0;
+		time = new Timer();
+		time.start();
 	}
 
 	@Override
@@ -71,7 +77,7 @@ public class GameScreen extends ScreenAdapter {
         banana=new Texture(Gdx.files.internal("banana.png"));
         bug=new Texture(Gdx.files.internal("bug.png"));
 		snakes.add(new Snake(this, Snake.Color.GREEN, 0, 0));
-		if(nbPlayers == 2)
+		if(nbPlayers)
 			snakes.add(new Snake(this, Snake.Color.RED, 50, 50));
 		numberAlives = snakes.size;
 	}
@@ -81,7 +87,10 @@ public class GameScreen extends ScreenAdapter {
 		if(numberAlives == 0) state = STATE.GAME_OVER;
 		switch(state){
 		case PLAYING: {
-			queryInput();
+			queryInput_solo();
+			if(nbPlayers){
+				queryInput_multi();
+			}
 
 			timer-=delta;
 			if(timer<=0){
@@ -105,7 +114,7 @@ public class GameScreen extends ScreenAdapter {
 		draw();
 	}
 	
-	private void queryInput() {
+	private void queryInput_solo() {
 		boolean lPressed1 = Gdx.input.isKeyPressed(Input.Keys.LEFT);
 		boolean rPressed1 = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 		boolean uPressed1 = Gdx.input.isKeyPressed(Input.Keys.UP);
@@ -116,12 +125,14 @@ public class GameScreen extends ScreenAdapter {
 		if (uPressed1) snakes.get(0).updateDirection(UP);
 		if (dPressed1) snakes.get(0).updateDirection(DOWN);
 
+	}
 
+	private void queryInput_multi() {
 		boolean lPressed2 = Gdx.input.isKeyPressed(Input.Keys.Q);
 		boolean rPressed2 = Gdx.input.isKeyPressed(Input.Keys.D);
 		boolean uPressed2 = Gdx.input.isKeyPressed(Input.Keys.Z);
 		boolean dPressed2 = Gdx.input.isKeyPressed(Input.Keys.S);
-		
+
 		if (lPressed2) snakes.get(1).updateDirection(LEFT);
 		if (rPressed2) snakes.get(1).updateDirection(RIGHT);
 		if (uPressed2) snakes.get(1).updateDirection(UP);
@@ -132,8 +143,10 @@ public class GameScreen extends ScreenAdapter {
 		if(!appleAvailable){
 			boolean onASnake;
 			do{
-				appleX=MathUtils.random(Gdx.graphics.getBackBufferHeight()/Snake.SNAKE_MOVEMENT-1)*Snake.SNAKE_MOVEMENT;
-				appleY=MathUtils.random(Gdx.graphics.getHeight()/Snake.SNAKE_MOVEMENT-1)*Snake.SNAKE_MOVEMENT;
+				int pomme_x = Gdx.graphics.getBackBufferHeight()/Snake.SNAKE_MOVEMENT-1;
+				int pomme_y = Gdx.graphics.getHeight()/Snake.SNAKE_MOVEMENT-1;
+				appleX=MathUtils.random(pomme_x*1/4,pomme_x*3/4)*Snake.SNAKE_MOVEMENT;
+				appleY=MathUtils.random(pomme_y*1/4,pomme_x*3/4)*Snake.SNAKE_MOVEMENT;
 				appleAvailable=true;
 				onASnake = false;
 				for(Snake snake : snakes){
@@ -172,8 +185,18 @@ public class GameScreen extends ScreenAdapter {
 		}
 		if (state == STATE.GAME_OVER) {
 			new BitmapFont().draw(batch, GAME_OVER_TEXT, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
-        	game.setScreen(new Screen_start_textures(game));
-        	sound.stop();
+			new BitmapFont().draw(batch,"socre joueur 1 : " + Integer.toString(snakes.get(0).get_score()), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*3/4);
+			if(nbPlayers){
+				new BitmapFont().draw(batch,"socre joueur 2 : " + Integer.toString(snakes.get(1).get_score()), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*2/3);
+			}
+			Timer.schedule(new Timer.Task(){
+							   @Override
+							   public void run() {
+							   	Timer.instance().clear();
+								   game.setScreen(new Screen_start_textures(game));
+								   sound.stop();
+							   }
+						   },3);
 		}
         batch.draw(bgSupp, 0, 0);
 		batch.end();

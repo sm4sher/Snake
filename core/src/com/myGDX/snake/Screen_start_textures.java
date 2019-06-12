@@ -126,7 +126,7 @@ public class Screen_start_textures implements Screen{
                 button_jeu.addAction(Actions.fadeOut(0.7f));
                 id = sound.play(1.0f);
                 table.clearChildren();
-                game.setScreen(new GameScreen(game,2, 0));
+                game.setScreen(new GameScreen(game,double_multi.get_state(), double_mode.get_state()));
             }
         });
 

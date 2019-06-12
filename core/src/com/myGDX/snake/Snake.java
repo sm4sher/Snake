@@ -46,6 +46,7 @@ public class Snake {
 
 	Sound sound;
 	long id;
+	int score=0;
 
 	public Snake(GameScreen game, Color color, int initX, int initY){
 		snakeX = initX;
@@ -72,6 +73,10 @@ public class Snake {
 		}
 
 		animation = new Animation(1f/3f,animationFrames);
+	}
+
+	public int get_score(){
+		return score;
 	}
 
 	public static int getColorNumber(Color color){
@@ -225,6 +230,7 @@ public class Snake {
 			bodyParts.add(new BodyPart(snakeBody, previousPositions, positionIndex));
 			game.setAppleAvailable(false);
 			id = sound.play(2.0f);
+			score++;
 		}
 	}
 
