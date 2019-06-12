@@ -150,41 +150,45 @@ public class GameScreen extends ScreenAdapter {
 	private void checkAndPlaceBonus(){
 		int nbBonuses = getNbBonusesAvailable();
 		if(nbBonuses < 3){
+			float proba = MathUtils.random();
+			Bonus newBonus;
+			if(proba < 0.995 && nbBonuses > 0)
+				return;
+			else if (proba < 0.999)
+				newBonus = new Apple();
+			else if (proba < 0.9999)
+				newBonus = new Bug();
+			else
+				newBonus = new Banana();
+
+
 			boolean onSomething;
 			int bonusX;
 			int bonusY;
 			do{
 				int bonus_x = Gdx.graphics.getBackBufferHeight()/Snake.SNAKE_MOVEMENT-1;
 				int bonus_y = Gdx.graphics.getHeight()/Snake.SNAKE_MOVEMENT-1;
-				bonusX=MathUtils.random(bonus_x*1/4,bonus_x*3/4)*Snake.SNAKE_MOVEMENT;
-				bonusY=MathUtils.random(bonus_y*1/4,bonus_y*3/4)*Snake.SNAKE_MOVEMENT;
+				bonusX=MathUtils.random(bonus_x*1/8,bonus_x*7/8)*Snake.SNAKE_MOVEMENT;
+				bonusY=MathUtils.random(bonus_y*1/8,bonus_y*7/8)*Snake.SNAKE_MOVEMENT;
 
 				onSomething = false;
 				for(Snake snake : snakes){
-					if(snake.isOnSnake(bonusX, bonusY, Apple.texture.getHeight(), Apple.texture.getWidth())){
+					if(snake.isOnSnake(bonusX, bonusY, newBonus.getHeight(), newBonus.getWidth())){
 						onSomething = true;
 						break;
 					}
 				}
-				// if(!onSomething){
-				// 	for(Bonus bonus : bonuses){
-				// 		if(isOverlapping(appleX, appleY, apple.getHeight(), apple.getWidth())){
-				// 			onSomething = true;
-				// 			break;
-				// 		}
-				// 	}
-				// }
+				if(!onSomething){
+					for(Bonus bonus : bonuses){
+						if(bonus.isOnBonus(bonusX, bonusY, newBonus.getHeight(), newBonus.getWidth())){
+							onSomething = true;
+							break;
+						}
+					}
+				}
 			} while(onSomething);
-			float proba = MathUtils.random();
-
-			if(proba < 0.995 && nbBonuses > 0)
-				return;
-			else if (proba < 0.999)
-				bonuses.add(new Apple(new Point(bonusX, bonusY)));
-			else if (proba < 0.9999)
-				bonuses.add(new Bug(new Point(bonusX, bonusY)));
-			else
-				bonuses.add(new Banana(new Point(bonusX, bonusY)));
+			newBonus.setPos(new Point(bonusX, bonusY));
+			bonuses.add(newBonus);
 		}
 	}
 

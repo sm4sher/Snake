@@ -197,7 +197,7 @@ public class Snake {
 		//On ne vérifie pas la première bodyPart car elle overlap avec la tête lors des virages par exemple, et il est de toute façon normalement impossible de percuter la première
 		for(int i = 1; i < bodyParts.size(); i++){
 			BodyPart bodyPart = bodyParts.get(i);
-			if(isOverlapping(bodyPart.getX(), bodyPart.getY(), snakeBody.getHeight(), snakeBody.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
+			if(Util.isOverlapping(bodyPart.getX(), bodyPart.getY(), snakeBody.getHeight(), snakeBody.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
 				state = STATE.DYING;
 				damage.play(3.0f);
 			}
@@ -212,13 +212,13 @@ public class Snake {
 				continue;
 			if(otherSnake.isDead())
 				continue;
-			if(isOverlapping(otherSnake.getSnakeX(), otherSnake.getSnakeY(), snakeHead.getHeight(), snakeHead.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
+			if(Util.isOverlapping(otherSnake.getSnakeX(), otherSnake.getSnakeY(), snakeHead.getHeight(), snakeHead.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
 				state = STATE.DYING;
 				damage.play(3.0f);
 				otherSnake.setState(STATE.DYING);
 			}
 			for(BodyPart otherBodyPart : otherSnake.getBodyParts()){
-				if(isOverlapping(otherBodyPart.getX(), otherBodyPart.getY(), snakeBody.getHeight(), snakeBody.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
+				if(Util.isOverlapping(otherBodyPart.getX(), otherBodyPart.getY(), snakeBody.getHeight(), snakeBody.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
 					state = STATE.DYING;
 					damage.play(3.0f);
 				}
@@ -250,10 +250,10 @@ public class Snake {
 	}
 
 	public boolean isOnSnake(int x, int y, int height, int width){
-		if(isOverlapping(x, y, height, width, snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth()))
+		if(Util.isOverlapping(x, y, height, width, snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth()))
 			return true;
 		for(BodyPart bodyPart : bodyParts)
-			if(isOverlapping(x, y, height, width, bodyPart.getX(), bodyPart.getY(), snakeBody.getHeight(), snakeBody.getWidth()))
+			if(Util.isOverlapping(x, y, height, width, bodyPart.getX(), bodyPart.getY(), snakeBody.getHeight(), snakeBody.getWidth()))
 				return true;
 		return false;
 	}
@@ -280,14 +280,6 @@ public class Snake {
 		}
 	}
 
-	private boolean isOverlapping(int x1, int y1, int h1, int w1, int x2, int y2, int h2, int w2){
-		int top1 = y1 + h1;
-		int right1 = x1 + w1;
-		int top2 = y2 + h2;
-		int right2 = x2 + w2;
-		return !(y1 >= top2 || y2 >= top1 || x1 >= right2 || x2 >= right1);
-
-	}
 	public int getSnakeX(){
 		return this.snakeX;
 	}
