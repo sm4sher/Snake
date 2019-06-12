@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.GdxBuild;
 import com.badlogic.gdx.utils.Timer;
 
 import java.util.ArrayList;
@@ -56,17 +57,24 @@ public class GameScreen extends ScreenAdapter {
 
 	Sound sound;
 	long id;
+	int num_music;
 	int score;
 
-	public GameScreen(SnakeGame game, boolean nbPlayers, boolean gameMode){
+	public GameScreen(SnakeGame game, boolean nbPlayers, boolean gameMode, int num_music){
 		super();
 		this.game = game;
 		this.nbPlayers = nbPlayers;
 		this.gameMode = gameMode;
+		this.num_music = num_music;
 
-		sound = Gdx.audio.newSound(Gdx.files.internal("doom.wav"));
+		if(num_music == 0){
+			sound = Gdx.audio.newSound(Gdx.files.internal("doom.wav"));
+		}
+		else{
+			sound = Gdx.audio.newSound(Gdx.files.internal("Zelda_music.wav"));
+		}
 		id = sound.play(2.0f);
-		sound.setLooping(id, true);
+		sound.setLooping(id,true);
 		score = 0;
 	}
 
@@ -211,6 +219,8 @@ public class GameScreen extends ScreenAdapter {
 			bonus.draw(batch);
 
 		if (state == STATE.GAME_OVER) {
+			sound.stop();
+
 			new BitmapFont().draw(batch, GAME_OVER_TEXT, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 			if(!nbPlayers){
 				new BitmapFont().draw(batch,"score joueur : " + Integer.toString(snakes.get(0).get_score()), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*3/4);
@@ -224,12 +234,12 @@ public class GameScreen extends ScreenAdapter {
 					new BitmapFont().draw(batch,"score joueur 2 : " + Integer.toString(snakes.get(1).get_score()), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*2/3);
 				}
 			}
+
 			Timer.schedule(new Timer.Task(){
 							   @Override
 							   public void run() {
 							   	Timer.instance().clear();
 								   game.setScreen(new Screen_start_textures(game));
-								   sound.stop();
 							   }
 						   },3);
 		}

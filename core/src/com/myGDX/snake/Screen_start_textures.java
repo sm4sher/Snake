@@ -44,6 +44,11 @@ public class Screen_start_textures implements Screen{
     private Double_button double_jeu;
     private ImageButton button_jeu;
 
+    private String string_doom = "pixel_doom.png";
+    private String string_link = "pixel_link.png";
+    private Double_button double_music;
+    private ImageButton button_music;
+
     private Texture texture_background;
     private Texture texture_upground;
 
@@ -61,6 +66,7 @@ public class Screen_start_textures implements Screen{
 
     private Sound sound;
     private long id;
+    private int num_music=1;
 
     protected void create() {
 
@@ -118,16 +124,14 @@ public class Screen_start_textures implements Screen{
         button_jeu = new ImageButton(double_jeu.texture_draw(true));
         table.add(button_jeu);
 
-        stage.addActor(table);
+        table.row().height(106).width(240);
 
-        button_jeu.addListener(new ClickListener(){
-            public void clicked(InputEvent event, float x, float y){
-                button_jeu.addAction(Actions.fadeOut(0.7f));
-                id = sound.play(1.0f);
-                table.clearChildren();
-                game.setScreen(new GameScreen(game,double_multi.get_state(), double_mode.get_state()));
-            }
-        });
+        double_music = new Double_button(string_link,string_doom,string_doom);
+        button_music = new ImageButton(double_music.texture_draw(true), double_music.texture_draw(false), double_music.texture_draw(false));
+        table.add(button_music);
+
+
+        stage.addActor(table);
 
         button_multi.addListener(new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
@@ -151,6 +155,30 @@ public class Screen_start_textures implements Screen{
                 button_mode.addAction(Actions.fadeOut(0.7f));
                 double_mode.update_state();
                 button_mode.setChecked(double_mode.get_state());
+            }
+        });
+
+        button_jeu.addListener(new ClickListener(){
+            public void clicked(InputEvent event, float x, float y){
+                button_jeu.addAction(Actions.fadeOut(0.7f));
+                id = sound.play(1.0f);
+                table.clearChildren();
+                game.setScreen(new GameScreen(game,double_multi.get_state(), double_mode.get_state(), num_music));
+            }
+        });
+
+        button_music.addListener(new ClickListener(){
+            public void clicked(InputEvent event, float x, float y){
+                button_music.addAction(Actions.fadeOut(0.7f));
+                id = sound.play(1.0f);
+                double_music.update_state();
+                button_music.setChecked(double_music.get_state());
+                if(num_music == 1){
+                    num_music = 0;
+                }
+                else{
+                    num_music = 1;
+                }
             }
         });
     }

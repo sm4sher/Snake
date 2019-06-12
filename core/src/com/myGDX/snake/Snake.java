@@ -46,12 +46,14 @@ public class Snake {
 
 	long id;
 	int score=0;
+	Sound damage;
 
 	public Snake(GameScreen game, Color color, int initX, int initY){
 		snakeX = initX;
 		snakeY = initY;
 		snakeHead = new Texture(Gdx.files.internal("snakeHead" + getColorNumber(color) + ".png"));
 		snakeBody = new Texture(Gdx.files.internal("snakeBody" + getColorNumber(color) + ".png"));
+		damage = Gdx.audio.newSound(Gdx.files.internal("Minecraft_damage.wav"));
 		this.game = game;
 		create();
 	}
@@ -197,6 +199,7 @@ public class Snake {
 			BodyPart bodyPart = bodyParts.get(i);
 			if(isOverlapping(bodyPart.getX(), bodyPart.getY(), snakeBody.getHeight(), snakeBody.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
 				state = STATE.DYING;
+				damage.play(3.0f);
 			}
 		}
 		return false;
@@ -211,11 +214,13 @@ public class Snake {
 				continue;
 			if(isOverlapping(otherSnake.getSnakeX(), otherSnake.getSnakeY(), snakeHead.getHeight(), snakeHead.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
 				state = STATE.DYING;
+				damage.play(3.0f);
 				otherSnake.setState(STATE.DYING);
 			}
 			for(BodyPart otherBodyPart : otherSnake.getBodyParts()){
 				if(isOverlapping(otherBodyPart.getX(), otherBodyPart.getY(), snakeBody.getHeight(), snakeBody.getWidth(), snakeX, snakeY, snakeHead.getHeight(), snakeHead.getWidth())){
 					state = STATE.DYING;
+					damage.play(3.0f);
 				}
 			}
 		}
