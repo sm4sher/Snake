@@ -4,14 +4,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -104,10 +108,11 @@ public class Screen_start_textures implements Screen{
 
         table = new Table();
         table.setSize(WorldWidth, WorldHeigth);
+        table.bottom().left();
 
         double_multi = new Double_button(string_multi_up, string_multi_down, string_multi_down);
         button_multi = new ImageButton(double_multi.texture_draw(true), double_multi.texture_draw(false), double_multi.texture_draw(false));
-        table.add(button_multi);
+        table.add(button_multi).padLeft(192);
 
         table.row().height(146).width(240);
 
@@ -116,20 +121,21 @@ public class Screen_start_textures implements Screen{
 
         button_mode = new ImageButton(double_mode.getStyle());
         button_mode.setDisabled(true);
-        table.add(button_mode);
+        table.add(button_mode).padLeft(192);
 
         table.row().height(106).width(240);
 
         double_jeu = new Double_button(string_jeu, string_jeu, string_jeu);
         button_jeu = new ImageButton(double_jeu.texture_draw(true));
-        table.add(button_jeu);
+        table.add(button_jeu).spaceBottom(270).padLeft(192);
 
-        table.row().height(106).width(240);
+        table.row();
 
         double_music = new Double_button(string_link,string_doom,string_doom);
         button_music = new ImageButton(double_music.texture_draw(true), double_music.texture_draw(false), double_music.texture_draw(false));
-        table.add(button_music);
+        table.add(button_music).bottom().padBottom(50).padRight(500).padLeft(50);
 
+        table.add(new Label("Meilleur score : "+highscore, new Label.LabelStyle(new BitmapFont(), Color.WHITE))).spaceBottom(50);
 
         stage.addActor(table);
 
@@ -199,7 +205,6 @@ public class Screen_start_textures implements Screen{
 
         stateTime += Gdx.graphics.getDeltaTime();
         TextureRegion currentFrame = playAnimation.getKeyFrame(stateTime, true);
-
         batch.begin();
         stage.draw();
         batch.draw(currentFrame, 50, 50); // Draw current frame at (50, 50)
@@ -221,7 +226,8 @@ public class Screen_start_textures implements Screen{
 
     @Override
     public void resize(int width, int height) {
-
+        width = WorldWidth;
+        height = WorldHeigth;
     }
 
     @Override

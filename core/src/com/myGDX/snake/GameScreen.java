@@ -78,6 +78,10 @@ public class GameScreen extends ScreenAdapter {
 		score = 0;
 	}
 
+	public int get_score(){
+		return score;
+	}
+
 	@Override
 	public void show(){
 		batch=new SpriteBatch();

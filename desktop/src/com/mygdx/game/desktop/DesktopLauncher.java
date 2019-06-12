@@ -9,6 +9,7 @@ import com.myGDX.snake.SnakeGame;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.resizable = false;
 		config.width = 960;
 		config.height = 960;
 		new LwjglApplication(new SnakeGame(), config);
