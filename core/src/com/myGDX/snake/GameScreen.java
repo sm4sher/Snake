@@ -41,7 +41,7 @@ public class GameScreen extends ScreenAdapter {
     private int bugX, bugY;
 	
 	private enum STATE {
-		PLAYING, GAME_OVER
+		PLAYING, GAME_OVER, PAUSE
 	}
 	private STATE state=STATE.PLAYING;
 	private int numberAlives;
@@ -67,6 +67,8 @@ public class GameScreen extends ScreenAdapter {
 	boolean color2;
 
 	private BitmapFont font;
+
+	private float timeSinceLastPause = 0F;
 
 	public GameScreen(SnakeGame game, boolean nbPlayers, boolean gameMode, int num_music, boolean color1, boolean color2){
 		super();
@@ -123,6 +125,13 @@ public class GameScreen extends ScreenAdapter {
 	@Override
 	public void render(float delta){
 		if(numberAlives == 0) state = STATE.GAME_OVER;
+		timeSinceLastPause+=delta;
+
+		if(timeSinceLastPause > 0.1){
+			timeSinceLastPause = 0;
+			queryInputPause();
+		}
+
 		switch(state){
 		case PLAYING: {
 			queryInput_solo();
@@ -152,6 +161,17 @@ public class GameScreen extends ScreenAdapter {
 		draw(delta);
 	}
 	
+	public void queryInputPause(){
+		if(state == STATE.GAME_OVER)
+			return;
+
+		boolean pausePressed = Gdx.input.isKeyPressed(Input.Keys.P);
+
+		if(pausePressed){
+			state = (state == STATE.PLAYING ? STATE.PAUSE : STATE.PLAYING);
+		}
+	}
+
 	private void queryInput_solo() {
 		boolean lPressed1 = Gdx.input.isKeyPressed(Input.Keys.LEFT);
 		boolean rPressed1 = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
@@ -247,10 +267,16 @@ public class GameScreen extends ScreenAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
 		batch.begin();
 		batch.draw(bc, 0, 0);
-		for(Snake snake : snakes)
-			snake.draw(batch);
-		for(Bonus bonus : bonuses)
-			bonus.draw(batch, delta);
+		if(state == STATE.PAUSE){
+			font.draw(batch,"PAUSE", 450, Gdx.graphics.getHeight()*3/4);
+		}
+
+		if(state == STATE.PLAYING){
+			for(Snake snake : snakes)
+				snake.draw(batch);
+			for(Bonus bonus : bonuses)
+				bonus.draw(batch, delta);
+		}
 
 		if (state == STATE.GAME_OVER) {
 			sound.stop();
@@ -281,12 +307,9 @@ public class GameScreen extends ScreenAdapter {
 							   }
 						   },3);
 		}
+
         batch.draw(bgSupp, 0, 0);
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("AldotheApache.ttf"));
-		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-		parameter.size = 18;
-		BitmapFont font = generator.generateFont(parameter); // font size 12 pixels
-		generator.dispose(); // don't forget to dispose to avoid memory leaks!
+
 		if(!nbPlayers){
 			font.draw(batch, "score: "+snakes.get(0).get_score(), 450, 990);
 		}
