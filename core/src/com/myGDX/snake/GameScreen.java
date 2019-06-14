@@ -126,7 +126,7 @@ public class GameScreen extends ScreenAdapter {
 				timer=MOVE_TIME;
 				numberAlives = 0;
 				for(Snake snake : snakes){
-					snake.update(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), bonuses, snakes);
+					snake.update(960, Gdx.graphics.getWidth(), bonuses, snakes);
 					if(snake.getState() == Snake.STATE.ALIVE)
 						numberAlives++;
 				}

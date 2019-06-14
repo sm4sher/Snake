@@ -310,18 +310,18 @@ public class Snake {
 		}
 	}
 
-	public void checkForOutOfBounds(int width, int height){
-		if(snakeX>=width){
+	public void checkForOutOfBounds(int height, int width){
+		if(snakeX+snakeHead.getWidth()>=width){
 			snakeX=0;
 		}
 		if(snakeX<0){
-			snakeX=width-SNAKE_MOVEMENT;
+			snakeX=width-snakeHead.getWidth();
 		}
-		if(snakeY>=height){
+		if(snakeY+snakeHead.getHeight()>=height){
 			snakeY=0;
 		}
 		if(snakeY<0){
-			snakeY=height-SNAKE_MOVEMENT;
+			snakeY=height-snakeHead.getHeight();
 		}
 	}
 
