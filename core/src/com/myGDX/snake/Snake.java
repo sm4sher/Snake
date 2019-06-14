@@ -35,7 +35,15 @@ public class Snake {
 	Texture snakeDie4;
 	TextureRegion[] animationFrames4;
 	Animation animation4;
+	Texture snakeUp;
+	TextureRegion[] animationFramesUp;
+	Animation animationUp;
+	Texture snakeDown;
+	TextureRegion[] animationFramesDown;
+	Animation animationDown;
 	float elapsedTime;
+	float elapsedTimeUp;
+	float elapsedTimeDown;
 
 	public enum Color {
 		GREEN, BLUE, ORANGE, RED
@@ -48,7 +56,7 @@ public class Snake {
 	private ArrayList<BodyPart> bodyParts= new ArrayList<BodyPart>();
 	private ArrayList<Point> previousPositions = new ArrayList<Point>();
 
-	public static enum STATE {
+	public enum STATE {
 		ALIVE, DEAD, DYING
 	}
 	private STATE state=STATE.ALIVE;
@@ -59,6 +67,8 @@ public class Snake {
 	int score=0;
 	Sound damage;
 	public Color colorS;
+	boolean isUping = false;
+	boolean isDowning = false;
 
 	public Snake(GameScreen game, Color color, int initX, int initY){
 		color = getColorByNumber(random.nextInt(4) + 1);
@@ -77,20 +87,30 @@ public class Snake {
 		snakeDie2 = new Texture("snakeDie2.png");
 		snakeDie3 = new Texture("snakeDie3.png");
 		snakeDie4 = new Texture("snakeDie4.png");
+		snakeUp = new Texture("snakeUp.png");
+		snakeDown = new Texture("snakeDown.png");
+
 
 		TextureRegion[][] tmpFrames = TextureRegion.split(snakeDie,32,32);
 		TextureRegion[][] tmpFrames2 = TextureRegion.split(snakeDie2,32,32);
 		TextureRegion[][] tmpFrames3 = TextureRegion.split(snakeDie3,32,32);
 		TextureRegion[][] tmpFrames4 = TextureRegion.split(snakeDie4,32,32);
+		TextureRegion[][] tmpFramesUp = TextureRegion.split(snakeUp,32,32);
+		TextureRegion[][] tmpFramesDown = TextureRegion.split(snakeDown,32,32);
 
 		animationFrames = new TextureRegion[4];
 		animationFrames2 = new TextureRegion[4];
 		animationFrames3 = new TextureRegion[4];
 		animationFrames4 = new TextureRegion[4];
+		animationFramesUp = new TextureRegion[30];
+		animationFramesDown = new TextureRegion[30];
 		int index = 0;
 		int index2 = 0;
 		int index3 = 0;
 		int index4 = 0;
+		int index5 = 0;
+		int index6 = 0;
+
 
 		for (int i = 0; i < 2; i++){
 			for(int j = 0; j < 2; j++) {
@@ -100,11 +120,27 @@ public class Snake {
 				animationFrames4[index4++] = tmpFrames4[j][i];
 			}
 		}
+		for (int i = 0; i < 6; i++){
+			for(int j = 0; j < 5; j++) {
+				if (index5 < 36){
+					animationFramesUp[index5++] = tmpFramesUp[i][j];
+				}
+			}
+		}
+		for (int i = 6; i > 0; i--){
+			for(int j = 5; j > 0; j--) {
+				if (index5 < 36){
+					animationFramesDown[index6++] = tmpFramesDown[i][j];
+				}
+			}
+		}
 
 		animation = new Animation(1f/3f,animationFrames);
 		animation2 = new Animation(1f/3f,animationFrames2);
 		animation3 = new Animation(1f/3f,animationFrames3);
 		animation4 = new Animation(1f/3f,animationFrames4);
+		animationUp = new Animation(1f/50f,animationFramesUp);
+		animationDown = new Animation(1f/50f,animationFramesDown);
 	}
 
 	public void addBodyParts(int nb){
@@ -115,12 +151,14 @@ public class Snake {
 			int positionIndex = previousPositions.size() - (bodyParts.size() + 1)*(snakeHead.getHeight()/SNAKE_MOVEMENT);
 			bodyParts.add(new BodyPart(snakeBody, previousPositions, positionIndex));
 		}
+		isUping = true;
 	}
 
 	public void removeBodyParts(int nb){
 		nb = Math.min(nb, bodyParts.size());
 		for(int i = 0; i < nb; i++){
 			bodyParts.remove(bodyParts.size()-1);
+			isDowning = true;
 		}
 	}
 
@@ -314,7 +352,6 @@ public class Snake {
 		if(state == STATE.DYING){
 			elapsedTime += Gdx.graphics.getDeltaTime();
 			for(BodyPart bodyPart:bodyParts){
-
 				switch (getColorNumber(this.colorS)){
 					case 1:
 						batch.draw((TextureRegion) animation.getKeyFrame(elapsedTime,false),bodyPart.getX(),bodyPart.getY());
@@ -337,6 +374,26 @@ public class Snake {
 		batch.draw(snakeHead, snakeX, snakeY);
 		for(BodyPart bodyPart:bodyParts){
 			bodyPart.draw(batch);
+		}
+		if (isDowning && !bodyParts.isEmpty()){
+			elapsedTimeDown += Gdx.graphics.getDeltaTime();
+			for(BodyPart bodyPart:bodyParts) {
+				batch.draw((TextureRegion) animationDown.getKeyFrame(elapsedTimeDown, false), bodyPart.getX(), bodyPart.getY());
+			}
+			if(elapsedTimeDown > 0.8){
+				isDowning = false;
+				elapsedTimeDown = 0;
+			}
+		}
+		if (isUping && !bodyParts.isEmpty()){
+			elapsedTimeUp += Gdx.graphics.getDeltaTime();
+			for(BodyPart bodyPart:bodyParts) {
+				batch.draw((TextureRegion) animationUp.getKeyFrame(elapsedTimeUp, false), bodyPart.getX(), bodyPart.getY());
+			}
+			if(elapsedTimeUp > 0.8){
+				isUping = false;
+				elapsedTimeUp = 0;
+			}
 		}
 	}
 
