@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 public class Screen_start_textures implements Screen{
 
@@ -77,6 +78,8 @@ public class Screen_start_textures implements Screen{
     private long id;
     private int num_music=1;
 
+    private BitmapFont font;
+
     Pixmap cursor = new Pixmap(Gdx.files.internal("cursor.png"));
 
     protected void create() {
@@ -122,6 +125,12 @@ public class Screen_start_textures implements Screen{
         texture_background = new Texture("menuBG.png");
         texture_upground = new Texture("bgSupp.png");
 
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("AldotheApache.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 18;
+        font = generator.generateFont(parameter);
+        generator.dispose();
+
         table = new Table();
         table.setSize(WorldWidth, WorldHeigth);
         table.bottom().left();
@@ -147,7 +156,7 @@ public class Screen_start_textures implements Screen{
 
         table.row();
 
-        table.add(new Label("Couleur joueur 1 : ", new Label.LabelStyle(new BitmapFont(), Color.WHITE))).spaceBottom(20).padLeft(175);
+        table.add(new Label("Couleur joueur 1 : ", new Label.LabelStyle(font, Color.WHITE))).spaceBottom(20).padLeft(175);
         table.row();
         double_snake1 = new Double_button(string_snake1[0],string_snake1[1],string_snake1[1]);
         button_snake1 = new ImageButton(double_snake1.texture_draw(true),double_snake1.texture_draw(false),double_snake1.texture_draw(false));
@@ -155,7 +164,7 @@ public class Screen_start_textures implements Screen{
 
         table.row();
 
-        table.add(new Label("Couleur joueur 2 : ", new Label.LabelStyle(new BitmapFont(), Color.WHITE))).spaceBottom(20).padLeft(175);
+        table.add(new Label("Couleur joueur 2 : ", new Label.LabelStyle(font, Color.WHITE))).spaceBottom(20).padLeft(175);
         table.row();
         double_snake2 = new Double_button(string_snake2[0],string_snake2[1],string_snake2[1]);
         button_snake2 = new ImageButton(double_snake2.texture_draw(true),double_snake2.texture_draw(false),double_snake2.texture_draw(false));
@@ -167,7 +176,7 @@ public class Screen_start_textures implements Screen{
         button_music = new ImageButton(double_music.texture_draw(true), double_music.texture_draw(false), double_music.texture_draw(false));
         table.add(button_music).bottom().padBottom(50).padRight(500).padLeft(50);
 
-        table.add(new Label("Meilleur score : "+highscore, new Label.LabelStyle(new BitmapFont(), Color.WHITE))).spaceBottom(50);
+        table.add(new Label("Meilleur score : "+highscore, new Label.LabelStyle(font, Color.WHITE))).spaceBottom(50);
 
         stage.addActor(table);
 
