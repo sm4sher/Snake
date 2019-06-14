@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import java.util.ArrayList;
 import java.awt.Point;
 
+import static com.badlogic.gdx.math.MathUtils.random;
+
 public class Snake {
 	private Texture snakeHead;
 	
@@ -24,9 +26,18 @@ public class Snake {
 	Texture snakeDie;
 	TextureRegion[] animationFrames;
 	Animation animation;
+	Texture snakeDie2;
+	TextureRegion[] animationFrames2;
+	Animation animation2;
+	Texture snakeDie3;
+	TextureRegion[] animationFrames3;
+	Animation animation3;
+	Texture snakeDie4;
+	TextureRegion[] animationFrames4;
+	Animation animation4;
 	float elapsedTime;
 
-	public static enum Color {
+	public enum Color {
 		GREEN, BLUE, ORANGE, RED
 	}
 
@@ -47,8 +58,11 @@ public class Snake {
 	long id;
 	int score=0;
 	Sound damage;
+	public Color colorS;
 
 	public Snake(GameScreen game, Color color, int initX, int initY){
+		color = getColorByNumber(random.nextInt(4) + 1);
+		colorS = color;
 		snakeX = initX;
 		snakeY = initY;
 		snakeHead = new Texture(Gdx.files.internal("snakeHead" + getColorNumber(color) + ".png"));
@@ -60,19 +74,37 @@ public class Snake {
 
 	public void create () {
 		snakeDie = new Texture("snakeDie.png");
+		snakeDie2 = new Texture("snakeDie2.png");
+		snakeDie3 = new Texture("snakeDie3.png");
+		snakeDie4 = new Texture("snakeDie4.png");
 
 		TextureRegion[][] tmpFrames = TextureRegion.split(snakeDie,32,32);
+		TextureRegion[][] tmpFrames2 = TextureRegion.split(snakeDie2,32,32);
+		TextureRegion[][] tmpFrames3 = TextureRegion.split(snakeDie3,32,32);
+		TextureRegion[][] tmpFrames4 = TextureRegion.split(snakeDie4,32,32);
 
 		animationFrames = new TextureRegion[4];
+		animationFrames2 = new TextureRegion[4];
+		animationFrames3 = new TextureRegion[4];
+		animationFrames4 = new TextureRegion[4];
 		int index = 0;
+		int index2 = 0;
+		int index3 = 0;
+		int index4 = 0;
 
 		for (int i = 0; i < 2; i++){
 			for(int j = 0; j < 2; j++) {
 				animationFrames[index++] = tmpFrames[j][i];
+				animationFrames2[index2++] = tmpFrames2[j][i];
+				animationFrames3[index3++] = tmpFrames3[j][i];
+				animationFrames4[index4++] = tmpFrames4[j][i];
 			}
 		}
 
 		animation = new Animation(1f/3f,animationFrames);
+		animation2 = new Animation(1f/3f,animationFrames2);
+		animation3 = new Animation(1f/3f,animationFrames3);
+		animation4 = new Animation(1f/3f,animationFrames4);
 	}
 
 	public void addBodyParts(int nb){
@@ -108,6 +140,20 @@ public class Snake {
 				return 4;
 		}
 		return 1;
+	}
+
+	public static Color getColorByNumber(int color){
+		switch(color){
+			case 1:
+				return Color.GREEN;
+			case 2:
+				return Color.BLUE;
+			case 3:
+				return Color.ORANGE;
+			case 4:
+				return Color.RED;
+		}
+		return Color.GREEN;
 	}
 
 	public ArrayList<BodyPart> getBodyParts(){
@@ -268,7 +314,21 @@ public class Snake {
 		if(state == STATE.DYING){
 			elapsedTime += Gdx.graphics.getDeltaTime();
 			for(BodyPart bodyPart:bodyParts){
-				batch.draw((TextureRegion) animation.getKeyFrame(elapsedTime,false),bodyPart.getX(),bodyPart.getY());
+
+				switch (getColorNumber(this.colorS)){
+					case 1:
+						batch.draw((TextureRegion) animation.getKeyFrame(elapsedTime,false),bodyPart.getX(),bodyPart.getY());
+						break;
+					case 2:
+						batch.draw((TextureRegion) animation2.getKeyFrame(elapsedTime,false),bodyPart.getX(),bodyPart.getY());
+						break;
+					case 3:
+						batch.draw((TextureRegion) animation3.getKeyFrame(elapsedTime,false),bodyPart.getX(),bodyPart.getY());
+						break;
+					case 4:
+						batch.draw((TextureRegion) animation4.getKeyFrame(elapsedTime,false),bodyPart.getX(),bodyPart.getY());
+						break;
+				}
 				if(elapsedTime > 0.8)
 					state = STATE.DEAD;
 			}
