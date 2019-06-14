@@ -9,13 +9,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.GdxBuild;
 import com.badlogic.gdx.utils.Timer;
-
-//import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.*;
 
 import java.util.ArrayList;
 import java.awt.Point;
@@ -254,7 +252,7 @@ public class GameScreen extends ScreenAdapter {
 				current_score = snakes.get(0).get_score();
 				new BitmapFont().draw(batch,"score joueur : " + Integer.toString(current_score), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*3/4);
 			}
-			else if(nbPlayers){
+			else{
 				if(!gameMode){
 					current_score = snakes.get(0).get_score()+snakes.get(1).get_score();
 					new BitmapFont().draw(batch,"score joueurs : " + Integer.toString(current_score), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*3/4);
@@ -276,12 +274,22 @@ public class GameScreen extends ScreenAdapter {
 		}
         batch.draw(bgSupp, 0, 0);
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("AldotheApache.ttf"));
-		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-		parameter.size = 12;
+		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+		parameter.size = 18;
 		BitmapFont font = generator.generateFont(parameter); // font size 12 pixels
 		generator.dispose(); // don't forget to dispose to avoid memory leaks!
-        font.draw(batch, "score J1: 42", 25, 990);
-        new BitmapFont().draw(batch, "score J2: 42", 800, 990);
+		if(!nbPlayers){
+			font.draw(batch, "score: "+snakes.get(0).get_score(), 450, 990);
+		}
+		else{
+			if(!gameMode){
+				font.draw(batch, "score: "+snakes.get(0).get_score()+snakes.get(1).get_score(), 450, 990);
+			}
+			else{
+				font.draw(batch, "score J1: "+snakes.get(0).get_score(), 25, 990);
+				font.draw(batch, "score J2: "+snakes.get(1).get_score(), 800, 990);
+			}
+		}
 		batch.end();
 	}
 }
