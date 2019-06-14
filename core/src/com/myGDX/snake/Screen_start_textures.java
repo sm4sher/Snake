@@ -69,7 +69,6 @@ public class Screen_start_textures implements Screen{
 
     private Animation<TextureRegion> playAnimation; // Must declare frame type (TextureRegion)
     private Texture walkSheet;
-    SpriteBatch spriteBatch;
     private float stateTime;
 
     private SnakeGame game;
