@@ -62,12 +62,17 @@ public class GameScreen extends ScreenAdapter {
 	int score;
 	int current_score;
 
-	public GameScreen(SnakeGame game, boolean nbPlayers, boolean gameMode, int num_music){
+	boolean color1;
+	boolean color2;
+
+	public GameScreen(SnakeGame game, boolean nbPlayers, boolean gameMode, int num_music, boolean color1, boolean color2){
 		super();
 		this.game = game;
 		this.nbPlayers = nbPlayers;
 		this.gameMode = gameMode;
 		this.num_music = num_music;
+		this.color1 = color1;
+		this.color2 = color2;
 
 		if(num_music == 0){
 			sound = Gdx.audio.newSound(Gdx.files.internal("doom.wav"));
@@ -88,9 +93,20 @@ public class GameScreen extends ScreenAdapter {
 		apple=new Texture(Gdx.files.internal("apple.png"));
         banana=new Texture(Gdx.files.internal("banana.png"));
         bug=new Texture(Gdx.files.internal("bug.png"));
-		snakes.add(new Snake(this, Snake.Color.GREEN, 0, 0));
-		if(nbPlayers)
-			snakes.add(new Snake(this, Snake.Color.RED, 50, 50));
+        if(color1){
+			snakes.add(new Snake(this, Snake.Color.BLUE, 0, 0));
+		}
+		else{
+			snakes.add(new Snake(this, Snake.Color.GREEN, 0, 0));
+		}
+		if(nbPlayers){
+        	if(color2){
+				snakes.add(new Snake(this, Snake.Color.RED, 50, 50));
+			}
+			else{
+				snakes.add(new Snake(this, Snake.Color.ORANGE, 50, 50));
+			}
+		}
 		numberAlives = snakes.size();
 	}
 

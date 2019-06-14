@@ -19,15 +19,15 @@ public class Double_button{
     private int height = 96;
 
     public Double_button(String string_up, String string_down, String disabled){
-        drawable_button_up = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal(string_up),true)));
+        drawable_button_up = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal(string_up))));
         drawable_button_up.setMinWidth(width);
         drawable_button_up.setMinHeight(height);
 
-        drawable_button_down = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal(string_down),true)));
+        drawable_button_down = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal(string_down))));
         drawable_button_down.setMinWidth(width);
         drawable_button_down.setMinHeight(height);
 
-        drawable_disabled = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal(disabled),true)));
+        drawable_disabled = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal(disabled))));
         drawable_disabled.setMinWidth(width);
         drawable_disabled.setMinHeight(height);
 

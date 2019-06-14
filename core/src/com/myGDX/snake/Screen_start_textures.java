@@ -51,6 +51,14 @@ public class Screen_start_textures implements Screen{
     private Double_button double_music;
     private ImageButton button_music;
 
+    private String[] string_snake1 = new String[]{"snakeHead1.png","snakeHead2.png"};
+    private Double_button double_snake1;
+    private ImageButton button_snake1;
+
+    private String[] string_snake2 = new String[]{"snakeHead3.png","snakeHead4.png"};
+    private Double_button double_snake2;
+    private ImageButton button_snake2;
+
     private Texture texture_background;
     private Texture texture_upground;
 
@@ -136,9 +144,25 @@ public class Screen_start_textures implements Screen{
 
         double_jeu = new Double_button(string_jeu, string_jeu, string_jeu);
         button_jeu = new ImageButton(double_jeu.texture_draw(true));
-        table.add(button_jeu).spaceBottom(270).padLeft(192);
+        table.add(button_jeu).spaceBottom(80).padLeft(192);
 
         table.row();
+
+        table.add(new Label("Couleur joueur 1 : ", new Label.LabelStyle(new BitmapFont(), Color.WHITE))).spaceBottom(20).padLeft(175);
+        table.row();
+        double_snake1 = new Double_button(string_snake1[0],string_snake1[1],string_snake1[1]);
+        button_snake1 = new ImageButton(double_snake1.texture_draw(true),double_snake1.texture_draw(false),double_snake1.texture_draw(false));
+        table.add(button_snake1).padBottom(50).padLeft(175);
+
+        table.row();
+
+        table.add(new Label("Couleur joueur 2 : ", new Label.LabelStyle(new BitmapFont(), Color.WHITE))).spaceBottom(20).padLeft(175);
+        table.row();
+        double_snake2 = new Double_button(string_snake2[0],string_snake2[1],string_snake2[1]);
+        button_snake2 = new ImageButton(double_snake2.texture_draw(true),double_snake2.texture_draw(false),double_snake2.texture_draw(false));
+        table.add(button_snake2).padBottom(50).padLeft(175);
+
+        table.row().height(56).width(240);
 
         double_music = new Double_button(string_link,string_doom,string_doom);
         button_music = new ImageButton(double_music.texture_draw(true), double_music.texture_draw(false), double_music.texture_draw(false));
@@ -147,6 +171,24 @@ public class Screen_start_textures implements Screen{
         table.add(new Label("Meilleur score : "+highscore, new Label.LabelStyle(new BitmapFont(), Color.WHITE))).spaceBottom(50);
 
         stage.addActor(table);
+
+        button_snake1.addListener(new ClickListener(){
+            public void clicked(InputEvent event, float x, float y){
+                id = sound.play();
+                button_snake1.addAction(Actions.fadeOut(0.7f));
+                double_snake1.update_state();
+                button_snake1.setChecked(double_snake1.get_state());
+            }
+        });
+
+        button_snake2.addListener(new ClickListener(){
+            public void clicked(InputEvent event, float x, float y){
+                id = sound.play();
+                button_snake2.addAction(Actions.fadeOut(0.7f));
+                double_snake2.update_state();
+                button_snake2.setChecked(double_snake2.get_state());
+            }
+        });
 
         button_multi.addListener(new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
@@ -178,7 +220,7 @@ public class Screen_start_textures implements Screen{
                 button_jeu.addAction(Actions.fadeOut(0.7f));
                 id = sound.play(1.0f);
                 table.clearChildren();
-                game.setScreen(new GameScreen(game,double_multi.get_state(), double_mode.get_state(), num_music));
+                game.setScreen(new GameScreen(game,double_multi.get_state(), double_mode.get_state(), num_music, double_snake1.get_state(), double_snake2.get_state()));
             }
         });
 
