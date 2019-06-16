@@ -71,7 +71,6 @@ public class Snake {
 	boolean isDowning = false;
 
 	public Snake(GameScreen game, Color color, int initX, int initY){
-		color = getColorByNumber(random.nextInt(4) + 1);
 		colorS = color;
 		snakeX = initX;
 		snakeY = initY;

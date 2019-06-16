@@ -145,7 +145,7 @@ public class GameScreen extends ScreenAdapter {
 				numberAlives = 0;
 				for(Snake snake : snakes){
 					snake.update(960, Gdx.graphics.getWidth(), bonuses, snakes);
-					if(snake.getState() == Snake.STATE.ALIVE)
+					if(snake.getState() != Snake.STATE.DEAD)
 						numberAlives++;
 				}
 			}
