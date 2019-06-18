@@ -365,7 +365,8 @@ public class Snake {
 						batch.draw((TextureRegion) animation4.getKeyFrame(elapsedTime,false),bodyPart.getX(),bodyPart.getY());
 						break;
 				}
-				if(elapsedTime > 0.8)
+			}
+			if(elapsedTime > 0.8){
 					state = STATE.DEAD;
 			}
 			return;
