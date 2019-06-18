@@ -145,8 +145,9 @@ public class GameScreen extends ScreenAdapter {
 				numberAlives = 0;
 				for(Snake snake : snakes){
 					snake.update(960, Gdx.graphics.getWidth(), bonuses, snakes);
-					if(snake.getState() != Snake.STATE.DEAD)
+					if(snake.getState() != Snake.STATE.DEAD){
 						numberAlives++;
+					}
 				}
 			}
 			checkAndPlaceBonus();
@@ -315,7 +316,7 @@ public class GameScreen extends ScreenAdapter {
 		}
 		else{
 			if(!gameMode){
-				font.draw(batch, "score: "+snakes.get(0).get_score()+snakes.get(1).get_score(), 450, 990);
+				font.draw(batch, "score: "+(snakes.get(0).get_score()+snakes.get(1).get_score()), 450, 990);
 			}
 			else{
 				font.draw(batch, "score J1: "+snakes.get(0).get_score(), 25, 990);
